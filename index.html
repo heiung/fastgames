@@ -14,6 +14,7 @@
     <title>FAST GAMES</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #2ecc71; --primary-dark: #27ae60;
@@ -3943,6 +3944,63 @@
             z-index: 0;
             pointer-events: none;
         }
+        #page-uno .uno-turn-banner {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            z-index: 7;
+            transform: translateX(-50%);
+            min-width: min(92%, 420px);
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2px 10px;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(7, 18, 30, 0.82);
+            border: 1px solid rgba(187,247,208,0.28);
+            color: #ffffff;
+            box-shadow: 0 16px 34px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.12);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        #page-uno .uno-turn-banner span {
+            grid-row: 1 / 3;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+            padding-right: 12px;
+            border-right: 1px solid rgba(255,255,255,0.14);
+            color: #86efac;
+            font-size: 0.78rem;
+            font-weight: 950;
+            text-transform: uppercase;
+        }
+        #page-uno .uno-turn-banner strong {
+            color: #ffffff;
+            font-size: 1.04rem;
+            font-weight: 950;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #page-uno .uno-turn-banner em {
+            color: rgba(234,242,255,0.78);
+            font-size: 0.8rem;
+            font-style: normal;
+            font-weight: 800;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #page-uno .uno-turn-banner.thinking {
+            border-color: rgba(250,204,21,0.62);
+            box-shadow: 0 18px 38px rgba(0,0,0,0.32), 0 0 0 4px rgba(250,204,21,0.12);
+        }
+        #page-uno .uno-turn-banner.your-turn {
+            border-color: rgba(34,197,94,0.72);
+            box-shadow: 0 18px 38px rgba(0,0,0,0.32), 0 0 0 4px rgba(34,197,94,0.16);
+        }
         #page-uno .uno-players,
         #page-uno .uno-center,
         #page-uno .uno-status,
@@ -3972,6 +4030,7 @@
             border: 1px solid rgba(255,255,255,0.74) !important;
             color: #101927 !important;
             box-shadow: 0 18px 34px rgba(0,0,0,0.22) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         #page-uno .uno-player[data-seat="0"] {
             left: 0;
@@ -3993,9 +4052,38 @@
             transform: translateY(-50%);
         }
         #page-uno .uno-player.active {
-            background: linear-gradient(135deg, #fff7ed, #ffffff) !important;
-            border-color: #fbbf24 !important;
-            box-shadow: 0 0 0 4px rgba(251,191,36,0.28), 0 18px 38px rgba(0,0,0,0.26) !important;
+            background: linear-gradient(135deg, #dcfce7, #ffffff) !important;
+            border-color: #22c55e !important;
+            box-shadow: 0 0 0 5px rgba(34,197,94,0.26), 0 0 30px rgba(34,197,94,0.38), 0 18px 38px rgba(0,0,0,0.26) !important;
+            translate: 0 -4px;
+            scale: 1.03;
+        }
+        #page-uno .uno-player.active.thinking {
+            animation: unoThinkingPulse 1.28s ease-in-out infinite;
+        }
+        #page-uno .uno-player.active::before {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            border-radius: 12px;
+            border: 2px solid rgba(34,197,94,0.38);
+            pointer-events: none;
+        }
+        #page-uno .uno-turn-badge {
+            position: absolute;
+            right: 10px;
+            top: -13px;
+            z-index: 2;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            color: #ffffff !important;
+            border: 1px solid rgba(255,255,255,0.74);
+            box-shadow: 0 8px 16px rgba(22,163,74,0.26);
+            font-size: 0.68rem;
+            font-weight: 950;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
         #page-uno .uno-avatar {
             width: 44px;
@@ -4114,7 +4202,7 @@
         }
         #page-uno .uno-card-throw {
             opacity: 0;
-            animation: unoThrowToTable 760ms cubic-bezier(0.18, 0.9, 0.22, 1) forwards;
+            animation: unoThrowToTable 1120ms cubic-bezier(0.18, 0.9, 0.22, 1) forwards;
             animation-delay: var(--throw-delay, 0ms);
         }
         #page-uno .uno-status {
@@ -6308,6 +6396,14 @@
                 width: calc(100vw - 18px);
             }
         }
+        @keyframes unoThinkingPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 5px rgba(34,197,94,0.22), 0 0 24px rgba(34,197,94,0.28), 0 18px 38px rgba(0,0,0,0.24) !important;
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(250,204,21,0.22), 0 0 34px rgba(250,204,21,0.36), 0 18px 38px rgba(0,0,0,0.30) !important;
+            }
+        }
 
         /* Requested repair pass: Monopoly fit, readable labels, light-theme contrast, Line Ball containment. */
         .mono-avatar-picker {
@@ -7768,6 +7864,1453 @@
                 display: none !important;
             }
         }
+        .social-fab {
+            position: fixed;
+            right: 0;
+            top: 110px;
+            z-index: 1200;
+            width: 46px;
+            height: 118px;
+            border-radius: 16px 0 0 16px;
+            border: 1px solid rgba(187,247,208,0.52);
+            border-right: 0;
+            background: linear-gradient(180deg, rgba(34,197,94,0.98), rgba(5,150,105,0.98));
+            color: #ffffff;
+            font-weight: 900;
+            box-shadow: -12px 14px 34px rgba(15,23,42,0.28);
+            cursor: pointer;
+            transform: none;
+            transition: 0.22s ease;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 0;
+        }
+        .social-fab:hover { transform: translateX(-4px); filter: brightness(1.05); }
+        .social-fab.has-unread::after {
+            content: attr(data-unread);
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+        }
+        .social-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1201;
+            width: min(410px, calc(100vw - 18px));
+            height: 100dvh;
+            background:
+                linear-gradient(180deg, rgba(9,83,55,0.97), rgba(7,34,28,0.99) 42%, rgba(6,18,22,1));
+            color: #e5edf7;
+            box-shadow: -26px 0 56px rgba(2,6,23,0.38);
+            border-left: 1px solid rgba(187,247,208,0.22);
+            transform: translateX(104%);
+            transition: transform 0.24s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .social-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(135deg, rgba(187,247,208,0.08), transparent 34%),
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+            background-size: auto, 100% 46px;
+        }
+        body.social-open .social-panel { transform: translateX(0); }
+        body.social-open .social-fab { opacity: 0; pointer-events: none; }
+        .social-panel button,
+        .social-panel input { font: inherit; }
+        .social-header {
+            min-height: 62px;
+            padding: 12px 14px 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(187,247,208,0.18);
+            background: rgba(4,120,87,0.32);
+            position: relative;
+        }
+        .social-title {
+            font-weight: 950;
+            letter-spacing: 0;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        .social-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid rgba(187,247,208,0.2);
+            background: rgba(255,255,255,0.07);
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 900;
+        }
+        .social-icon-btn:hover {
+            background: rgba(34,197,94,0.22);
+            border-color: rgba(134,239,172,0.54);
+        }
+        .social-profile {
+            display: grid;
+            grid-template-columns: 56px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 14px 14px 14px 16px;
+            border-bottom: 1px solid rgba(187,247,208,0.14);
+            background: rgba(2,44,34,0.48);
+            position: relative;
+        }
+        .social-avatar-btn,
+        .social-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 2px solid rgba(134,239,172,0.55);
+            background: linear-gradient(145deg, #dcfce7, #22c55e);
+            color: #052e16;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-weight: 950;
+            flex: 0 0 auto;
+            box-shadow: 0 10px 24px rgba(2,6,23,0.24);
+        }
+        .social-avatar-btn { cursor: pointer; padding: 0; position: relative; }
+        .social-avatar-btn::after {
+            content: "Đổi";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 2px 0;
+            background: rgba(15,23,42,0.72);
+            color: #ffffff;
+            font-size: 0.62rem;
+            opacity: 0;
+            transition: 0.18s ease;
+        }
+        .social-avatar-btn:hover::after { opacity: 1; }
+        .social-avatar img,
+        .social-avatar-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .social-avatar.has-image img,
+        .social-avatar-btn.has-image img { display: block; }
+        .social-avatar.has-image span,
+        .social-avatar-btn.has-image span { display: none; }
+        .social-profile-main { min-width: 0; text-align: left; }
+        .social-name {
+            font-weight: 900;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .social-status-line {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: rgba(229,237,247,0.76);
+            font-size: 0.86rem;
+            margin-top: 3px;
+        }
+        .social-avatar-status {
+            margin-top: 5px;
+            min-height: 18px;
+            color: rgba(229,237,247,0.68);
+            font-size: 0.78rem;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+        .social-avatar-status.error { color: #fca5a5; }
+        .social-avatar-status.ok { color: #86efac; }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(148,163,184,0.14);
+        }
+        .status-dot.online { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.16); }
+        .status-dot.busy { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.16); }
+        .status-dot.away { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.18); }
+        .status-dot.gaming { background: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,0.16); }
+        .status-dot.invisible,
+        .status-dot.offline { background: #94a3b8; }
+        .social-status-wrap { position: relative; }
+        .social-status-btn {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(187,247,208,0.2);
+            background: rgba(4,120,87,0.28);
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .social-status-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 188px;
+            background: rgba(6,38,32,0.98);
+            border: 1px solid rgba(187,247,208,0.18);
+            box-shadow: 0 18px 38px rgba(2,6,23,0.34);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 4;
+        }
+        .social-status-menu button {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: #e5edf7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .social-status-menu button:hover { background: rgba(255,255,255,0.08); }
+        .social-search {
+            display: grid;
+            grid-template-columns: 1fr 42px;
+            gap: 8px;
+            padding: 14px 14px 8px;
+            position: relative;
+        }
+        .social-search input,
+        .social-chat-input input {
+            width: 100%;
+            min-width: 0;
+            border: 1px solid rgba(187,247,208,0.18);
+            background: rgba(1,22,18,0.42);
+            color: #ffffff;
+            border-radius: 8px;
+            outline: none;
+        }
+        .social-search input { height: 42px; padding: 0 12px; }
+        .social-search input::placeholder,
+        .social-chat-input input::placeholder { color: rgba(229,237,247,0.55); }
+        .social-search button,
+        .social-chat-input button,
+        .social-action-btn {
+            border: 0;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            color: #ffffff;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 18px rgba(22,163,74,0.22);
+        }
+        .social-search button { height: 42px; }
+        .social-search-result { padding: 0 14px 10px; }
+        .social-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 0 14px 10px;
+        }
+        .social-tab {
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid rgba(187,247,208,0.16);
+            background: rgba(255,255,255,0.055);
+            color: #dbeafe;
+            cursor: pointer;
+            font-weight: 850;
+        }
+        .social-tab.active {
+            background: rgba(34,197,94,0.24);
+            color: #ffffff;
+            border-color: rgba(134,239,172,0.62);
+        }
+        .social-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 10px 14px;
+            position: relative;
+        }
+        .social-empty {
+            margin: 12px 4px;
+            padding: 14px;
+            border: 1px dashed rgba(187,247,208,0.2);
+            border-radius: 8px;
+            color: rgba(229,237,247,0.68);
+            text-align: center;
+            font-weight: 750;
+        }
+        .friend-row {
+            display: grid;
+            grid-template-columns: 46px 1fr auto;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            color: #e5edf7;
+            border: 1px solid rgba(187,247,208,0.08);
+            background: rgba(255,255,255,0.035);
+        }
+        .friend-row:hover { background: rgba(34,197,94,0.12); border-color: rgba(134,239,172,0.28); }
+        .friend-row .social-avatar { width: 44px; height: 44px; font-size: 0.9rem; }
+        .friend-main { min-width: 0; text-align: left; cursor: pointer; }
+        .friend-name { color: #ffffff; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .friend-meta { display: flex; align-items: center; gap: 7px; color: rgba(229,237,247,0.68); font-size: 0.82rem; margin-top: 3px; }
+        .friend-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .friend-actions button,
+        .social-mini-btn {
+            height: 32px;
+            min-width: 34px;
+            padding: 0 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(187,247,208,0.16);
+            background: rgba(255,255,255,0.075);
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 850;
+        }
+        .friend-actions button.primary,
+        .social-mini-btn.primary {
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            border-color: rgba(134,239,172,0.56);
+        }
+        .friend-actions button.danger { background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.42); }
+        .social-chat-pane {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(8,83,58,0.99), rgba(6,18,22,1));
+            display: flex;
+            flex-direction: column;
+            transform: translateX(104%);
+            transition: transform 0.22s ease;
+        }
+        .social-panel.chat-open .social-chat-pane { transform: translateX(0); }
+        .social-chat-head {
+            min-height: 58px;
+            display: grid;
+            grid-template-columns: 40px 42px 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(187,247,208,0.18);
+            background: rgba(4,120,87,0.26);
+        }
+        .social-chat-head .social-avatar { width: 40px; height: 40px; }
+        .social-chat-log {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .social-message {
+            max-width: 78%;
+            padding: 9px 11px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.09);
+            color: #e5edf7;
+            align-self: flex-start;
+            text-align: left;
+            overflow-wrap: anywhere;
+        }
+        .social-message.mine {
+            align-self: flex-end;
+            background: rgba(34,197,94,0.34);
+            color: #ffffff;
+        }
+        .social-message-time {
+            margin-top: 4px;
+            font-size: 0.68rem;
+            color: rgba(229,237,247,0.58);
+        }
+        .social-chat-input {
+            display: grid;
+            grid-template-columns: 1fr 68px;
+            gap: 8px;
+            padding: 10px 12px 14px;
+            border-top: 1px solid rgba(187,247,208,0.16);
+        }
+        .social-chat-input input { height: 42px; padding: 0 12px; }
+        .social-chat-input button { height: 42px; }
+        body.theme-light .social-panel,
+        body.theme-light .social-chat-pane {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(241,245,249,0.99));
+            color: #1f2937;
+            border-left-color: rgba(15,23,42,0.12);
+        }
+        body.theme-light .social-title,
+        body.theme-light .social-name,
+        body.theme-light .friend-name { color: #111827; }
+        body.theme-light .social-status-line,
+        body.theme-light .friend-meta,
+        body.theme-light .social-empty { color: #64748b; }
+        body.theme-light .social-avatar-status { color: #64748b; }
+        body.theme-light .social-avatar-status.error { color: #dc2626; }
+        body.theme-light .social-avatar-status.ok { color: #16a34a; }
+        body.theme-light .social-icon-btn,
+        body.theme-light .social-status-btn,
+        body.theme-light .friend-actions button,
+        body.theme-light .social-mini-btn,
+        body.theme-light .social-tab {
+            background: rgba(15,23,42,0.05);
+            color: #1f2937;
+            border-color: rgba(15,23,42,0.12);
+        }
+        body.theme-light .social-search input,
+        body.theme-light .social-chat-input input {
+            background: #ffffff;
+            color: #111827;
+            border-color: rgba(15,23,42,0.14);
+        }
+        body.theme-light .social-search input::placeholder,
+        body.theme-light .social-chat-input input::placeholder { color: #94a3b8; }
+        body.theme-light .friend-row:hover { background: rgba(15,23,42,0.05); }
+        body.theme-light .social-message {
+            background: #e2e8f0;
+            color: #111827;
+        }
+        body.theme-light .social-message.mine {
+            background: #bbf7d0;
+            color: #14532d;
+        }
+        @media (max-width: 640px) {
+            .social-fab {
+                right: 0;
+                top: 96px;
+                width: 42px;
+                height: 104px;
+            }
+            .social-profile {
+                grid-template-columns: 52px 1fr;
+            }
+            .social-status-wrap {
+                grid-column: 1 / -1;
+                justify-self: stretch;
+            }
+            .social-status-btn { width: 100%; }
+            .social-status-menu { width: 100%; }
+        }
+
+        /* Unified light/dark theme layer. Keep this near the end so legacy game styles inherit one palette. */
+        :root {
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --theme-color: #16a34a;
+            --app-green: #16a34a;
+            --app-green-strong: #15803d;
+            --app-warning: #f59e0b;
+            --app-danger: #dc2626;
+        }
+        body.theme-light {
+            --bg: #eef7f1;
+            --surface: rgba(255,255,255,0.88);
+            --text: #142033;
+            --border: rgba(20,83,45,0.16);
+            --app-bg: #eef7f1;
+            --app-shell: rgba(247,252,249,0.82);
+            --app-surface: rgba(255,255,255,0.88);
+            --app-surface-strong: rgba(255,255,255,0.96);
+            --app-card: rgba(255,255,255,0.90);
+            --app-input: rgba(255,255,255,0.94);
+            --app-text: #142033;
+            --app-muted: #5b697d;
+            --app-border: rgba(20,83,45,0.16);
+            --app-shadow: 0 18px 42px rgba(15,23,42,0.13);
+            background:
+                radial-gradient(circle at 14% 12%, rgba(34,197,94,0.15), transparent 28%),
+                radial-gradient(circle at 88% 18%, rgba(22,163,74,0.10), transparent 26%),
+                linear-gradient(135deg, #eef7f1 0%, #f8fafc 54%, #ecfdf5 100%) !important;
+            color: var(--app-text) !important;
+        }
+        body.theme-dark {
+            --bg: #07130f;
+            --surface: rgba(8,20,17,0.82);
+            --text: #ecfdf5;
+            --border: rgba(187,247,208,0.16);
+            --app-bg: #07130f;
+            --app-shell: rgba(4,18,15,0.76);
+            --app-surface: rgba(8,24,20,0.82);
+            --app-surface-strong: rgba(10,33,27,0.94);
+            --app-card: rgba(13,32,27,0.88);
+            --app-input: rgba(2,12,10,0.74);
+            --app-text: #ecfdf5;
+            --app-muted: rgba(220,252,231,0.72);
+            --app-border: rgba(187,247,208,0.16);
+            --app-shadow: 0 22px 52px rgba(0,0,0,0.38);
+            background:
+                radial-gradient(circle at 16% 12%, rgba(34,197,94,0.18), transparent 29%),
+                radial-gradient(circle at 86% 20%, rgba(22,163,74,0.12), transparent 30%),
+                linear-gradient(135deg, #06110e 0%, #0a1f19 52%, #07151c 100%) !important;
+            color: var(--app-text) !important;
+        }
+        body.theme-light::before,
+        body.theme-dark::before {
+            background:
+                linear-gradient(rgba(34,197,94,0.055) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34,197,94,0.045) 1px, transparent 1px) !important;
+            background-size: 44px 44px !important;
+            opacity: 0.62 !important;
+        }
+        body.theme-dark::before { opacity: 0.28 !important; }
+        body.theme-light .container-box,
+        body.theme-dark .container-box {
+            background: var(--app-shell) !important;
+            color: var(--app-text) !important;
+            border-color: var(--app-border) !important;
+            box-shadow: var(--app-shadow) !important;
+        }
+        body.theme-light .header-top,
+        body.theme-dark .header-top,
+        body.theme-light .setup-group,
+        body.theme-dark .setup-group,
+        body.theme-light .pvp-scoreboard,
+        body.theme-dark .pvp-scoreboard,
+        body.theme-light .horse-topbar,
+        body.theme-dark .horse-topbar,
+        body.theme-light .horse-rules,
+        body.theme-dark .horse-rules,
+        body.theme-light .timer,
+        body.theme-dark .timer,
+        body.theme-light .best-pill,
+        body.theme-dark .best-pill,
+        body.theme-light #history-list,
+        body.theme-dark #history-list,
+        body.theme-light .online-comms,
+        body.theme-dark .online-comms,
+        body.theme-light .online-players-box,
+        body.theme-dark .online-players-box,
+        body.theme-light .online-audio-prefs,
+        body.theme-dark .online-audio-prefs,
+        body.theme-light .werewolf-card,
+        body.theme-dark .werewolf-card,
+        body.theme-light .werewolf-side,
+        body.theme-dark .werewolf-side,
+        body.theme-light .werewolf-chat-panel,
+        body.theme-dark .werewolf-chat-panel,
+        body.theme-light .snake-side,
+        body.theme-dark .snake-side,
+        body.theme-light .mono-status,
+        body.theme-dark .mono-status {
+            background: var(--app-surface) !important;
+            color: var(--app-text) !important;
+            border-color: var(--app-border) !important;
+            box-shadow: var(--app-shadow) !important;
+            text-shadow: none !important;
+        }
+        body.theme-light .menu-card,
+        body.theme-dark .menu-card,
+        body.theme-light .mono-player-card,
+        body.theme-dark .mono-player-card,
+        body.theme-light .snake-stat,
+        body.theme-dark .snake-stat,
+        body.theme-light .online-player-chip,
+        body.theme-dark .online-player-chip,
+        body.theme-light .chat-row,
+        body.theme-dark .chat-row,
+        body.theme-light .werewolf-chat-row,
+        body.theme-dark .werewolf-chat-row,
+        body.theme-light .history-entry,
+        body.theme-dark .history-entry,
+        body.theme-light .history-empty,
+        body.theme-dark .history-empty {
+            background: var(--app-card) !important;
+            color: var(--app-text) !important;
+            border-color: var(--app-border) !important;
+            text-shadow: none !important;
+        }
+        body.theme-light .menu-card h3,
+        body.theme-dark .menu-card h3,
+        body.theme-light .setup-group *,
+        body.theme-dark .setup-group *,
+        body.theme-light .horse-rules *,
+        body.theme-dark .horse-rules *,
+        body.theme-light .mono-status *,
+        body.theme-dark .mono-status *,
+        body.theme-light .mono-player-card *,
+        body.theme-dark .mono-player-card *,
+        body.theme-light .snake-side *,
+        body.theme-dark .snake-side * {
+            color: inherit !important;
+            text-shadow: none !important;
+        }
+        body.theme-light .subtitle,
+        body.theme-dark .subtitle,
+        body.theme-light p,
+        body.theme-dark p,
+        body.theme-light .history-entry span,
+        body.theme-dark .history-entry span,
+        body.theme-light .snake-stat span,
+        body.theme-dark .snake-stat span,
+        body.theme-light .friend-meta,
+        body.theme-dark .friend-meta {
+            color: var(--app-muted) !important;
+        }
+        body.theme-light input,
+        body.theme-dark input,
+        body.theme-light textarea,
+        body.theme-dark textarea,
+        body.theme-light select,
+        body.theme-dark select,
+        body.theme-light #game-search,
+        body.theme-dark #game-search,
+        body.theme-light #friend-id-input,
+        body.theme-dark #friend-id-input,
+        body.theme-light #online-chat-input,
+        body.theme-dark #online-chat-input,
+        body.theme-light #werewolf-chat-input,
+        body.theme-dark #werewolf-chat-input,
+        body.theme-light #auth-username,
+        body.theme-dark #auth-username,
+        body.theme-light #auth-password,
+        body.theme-dark #auth-password {
+            background: var(--app-input) !important;
+            color: var(--app-text) !important;
+            border-color: var(--app-border) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+        }
+        body.theme-light input::placeholder,
+        body.theme-dark input::placeholder,
+        body.theme-light textarea::placeholder,
+        body.theme-dark textarea::placeholder {
+            color: color-mix(in srgb, var(--app-muted) 76%, transparent) !important;
+        }
+        body.theme-light .btn,
+        body.theme-dark .btn {
+            background: linear-gradient(180deg, var(--app-green), var(--app-green-strong)) !important;
+            color: #ffffff !important;
+            box-shadow: 0 12px 26px rgba(22,163,74,0.22) !important;
+        }
+        body.theme-light .btn-outline:not(:hover):not(:focus-visible),
+        body.theme-dark .btn-outline:not(:hover):not(:focus-visible),
+        body.theme-light .custom-radio:not(.active):not(:hover):not(:focus-visible),
+        body.theme-dark .custom-radio:not(.active):not(:hover):not(:focus-visible) {
+            background: var(--app-surface-strong) !important;
+            color: color-mix(in srgb, var(--btn-color, var(--theme-color)) 52%, var(--app-text)) !important;
+            border-color: color-mix(in srgb, var(--btn-color, var(--theme-color)) 34%, var(--app-border)) !important;
+        }
+        body.theme-light .custom-radio.active,
+        body.theme-dark .custom-radio.active,
+        body.theme-light .custom-radio:hover,
+        body.theme-dark .custom-radio:hover,
+        body.theme-light .btn-outline:hover,
+        body.theme-dark .btn-outline:hover {
+            background: var(--btn-color, var(--theme-color)) !important;
+            color: #ffffff !important;
+            border-color: var(--btn-color, var(--theme-color)) !important;
+        }
+        body.theme-light #authModal,
+        body.theme-dark #authModal,
+        body.theme-light #winModal,
+        body.theme-dark #winModal,
+        body.theme-light #introModal,
+        body.theme-dark #introModal,
+        body.theme-light #uno-color-modal .uno-color-picker,
+        body.theme-dark #uno-color-modal .uno-color-picker {
+            background: var(--app-surface-strong) !important;
+            color: var(--app-text) !important;
+            border: 1px solid var(--app-border) !important;
+            box-shadow: var(--app-shadow) !important;
+        }
+        body.theme-light #authModal *,
+        body.theme-dark #authModal *,
+        body.theme-light #introModal *,
+        body.theme-dark #introModal * {
+            color: inherit;
+        }
+        body.theme-light #page-uno .horse-topbar,
+        body.theme-dark #page-uno .horse-topbar {
+            background: var(--app-surface-strong) !important;
+            color: var(--app-text) !important;
+            border-color: var(--app-border) !important;
+        }
+        body.theme-light #page-uno .horse-title,
+        body.theme-dark #page-uno .horse-title {
+            color: #dc2626 !important;
+            text-shadow: none !important;
+        }
+        body.theme-light #page-uno .uno-status,
+        body.theme-dark #page-uno .uno-status {
+            background: var(--app-surface-strong) !important;
+            color: var(--app-text) !important;
+            border: 1px solid var(--app-border) !important;
+        }
+        body.theme-light #page-uno .uno-turn-banner {
+            background: rgba(255,255,255,0.92) !important;
+            color: var(--app-text) !important;
+            border-color: rgba(34,197,94,0.32) !important;
+        }
+        body.theme-light #page-uno .uno-turn-banner strong,
+        body.theme-light #page-uno .uno-turn-banner em {
+            color: var(--app-text) !important;
+        }
+        body.theme-light #page-uno .uno-turn-banner span {
+            color: #15803d !important;
+        }
+
+        /* Green-only UI pass: remove mixed accent strips and force every game shell to one accent. */
+        body {
+            --theme-color: var(--app-green) !important;
+            --btn-color: var(--app-green) !important;
+        }
+        [id^="page-"] {
+            --theme-color: var(--app-green) !important;
+            --btn-color: var(--app-green) !important;
+        }
+        .menu-card::before,
+        .menu-card.fg-tile::before,
+        .fg-tile::before {
+            content: none !important;
+            display: none !important;
+            height: 0 !important;
+            background: none !important;
+        }
+        .menu-card.fg-tile::after {
+            background: radial-gradient(circle, rgba(34,197,94,0.16), transparent 70%) !important;
+        }
+        .menu-card,
+        .menu-card.fg-tile,
+        .game-card-item {
+            --tile-a: var(--app-green) !important;
+            --tile-b: #22c55e !important;
+            border-color: var(--app-border) !important;
+            background: var(--app-card) !important;
+        }
+        .menu-card:hover,
+        .menu-card.fg-tile:hover,
+        .game-card-item:hover {
+            border-color: var(--app-green) !important;
+            box-shadow: 0 18px 38px rgba(22,163,74,0.18) !important;
+        }
+        .fg-menu-icon {
+            background: linear-gradient(145deg, var(--app-green), #22c55e) !important;
+            box-shadow: 0 18px 26px rgba(22,163,74,0.22), inset 0 1px 0 rgba(255,255,255,0.36) !important;
+        }
+        .btn,
+        button.btn,
+        [id^="page-"] .btn {
+            background: linear-gradient(180deg, var(--app-green), var(--app-green-strong)) !important;
+            color: #ffffff !important;
+            border-color: var(--app-green) !important;
+        }
+        .btn-outline,
+        [id^="page-"] .btn-outline,
+        .custom-radio,
+        [id^="page-"] .custom-radio {
+            --btn-color: var(--app-green) !important;
+            border-color: rgba(22,163,74,0.42) !important;
+            color: var(--app-green-strong) !important;
+        }
+        .custom-radio.active,
+        .custom-radio:hover,
+        .btn-outline:hover,
+        .btn-outline:focus-visible {
+            background: var(--app-green) !important;
+            color: #ffffff !important;
+            border-color: var(--app-green) !important;
+            box-shadow: 0 12px 26px rgba(22,163,74,0.22) !important;
+        }
+        .btn-back {
+            color: var(--app-text) !important;
+            border-color: var(--app-border) !important;
+            background: var(--app-surface-strong) !important;
+        }
+        .btn-back:hover {
+            background: var(--app-green) !important;
+            color: #ffffff !important;
+            border-color: var(--app-green) !important;
+        }
+        [id^="page-"] h2,
+        [id^="page-"] h3,
+        .horse-title,
+        #ui-h,
+        #page-uno .horse-title,
+        #page-monopoly .horse-title,
+        #page-werewolf .horse-title {
+            color: var(--app-green-strong) !important;
+            text-shadow: none !important;
+        }
+        body.theme-dark [id^="page-"] h2,
+        body.theme-dark [id^="page-"] h3,
+        body.theme-dark .horse-title,
+        body.theme-dark #ui-h,
+        body.theme-dark #page-uno .horse-title,
+        body.theme-dark #page-monopoly .horse-title,
+        body.theme-dark #page-werewolf .horse-title {
+            color: #86efac !important;
+        }
+        .timer,
+        .score-badge,
+        .best-pill,
+        .mono-turn-summary strong,
+        .snake-stat strong,
+        #turn-ttt,
+        #turn-chess,
+        #turn-cchess,
+        #current-j-level,
+        #score-b,
+        #target-b {
+            color: var(--app-green-strong) !important;
+            border-color: rgba(22,163,74,0.22) !important;
+        }
+        body.theme-dark .timer,
+        body.theme-dark .score-badge,
+        body.theme-dark .best-pill,
+        body.theme-dark .mono-turn-summary strong,
+        body.theme-dark .snake-stat strong {
+            color: #86efac !important;
+        }
+        input:focus,
+        textarea:focus,
+        #game-search:focus,
+        #friend-id-input:focus,
+        #auth-username:focus,
+        #auth-password:focus {
+            border-color: var(--app-green) !important;
+            box-shadow: 0 0 0 4px rgba(22,163,74,0.12) !important;
+        }
+        #page-uno,
+        #page-uno-menu,
+        #page-werewolf,
+        #page-werewolf-menu,
+        #page-horse,
+        #page-horse-menu,
+        #page-oanquan,
+        #page-oanquan-menu,
+        #page-sudoku,
+        #page-sudoku-menu,
+        #page-block,
+        #page-block-menu,
+        #page-block-journey,
+        #page-ttt,
+        #page-ttt-menu,
+        #page-online-lobby {
+            --theme-color: var(--app-green) !important;
+            --btn-color: var(--app-green) !important;
+        }
+        #page-uno .uno-player.active,
+        #page-monopoly .mono-score-chip.active,
+        #page-monopoly .mono-player-card.active,
+        #page-horse .horse-avatar-seat.active .face,
+        #page-werewolf .werewolf-player:hover {
+            border-color: var(--app-green) !important;
+            box-shadow: 0 0 0 5px rgba(22,163,74,0.20), 0 18px 38px rgba(0,0,0,0.22) !important;
+        }
+        #page-monopoly .mono-band {
+            background: var(--app-green) !important;
+        }
+        #page-monopoly .mono-cell.mono-active,
+        #page-oanquan .oaq-cell.selected,
+        #page-sudoku .cell-s.selected,
+        .flag-cell.current {
+            outline-color: rgba(22,163,74,0.42) !important;
+            box-shadow: 0 0 0 4px rgba(22,163,74,0.22) !important;
+        }
+
+        /* Repair pass: left logo, full PNG icon frames, and balanced accents. */
+        body.theme-light {
+            --app-accent: #0ea5e9;
+            --app-warm: #f59e0b;
+            --app-rose: #e11d48;
+            --app-violet: #8b5cf6;
+            --app-green: #14b8a6;
+            --app-green-strong: #0f766e;
+            --app-bg: #f4f7fb;
+            --app-shell: rgba(248,250,252,0.86);
+            --app-card: rgba(255,255,255,0.92);
+            --app-border: rgba(37,99,235,0.15);
+            background:
+                radial-gradient(circle at 15% 12%, rgba(14,165,233,0.16), transparent 30%),
+                radial-gradient(circle at 86% 14%, rgba(245,158,11,0.15), transparent 28%),
+                radial-gradient(circle at 76% 86%, rgba(139,92,246,0.14), transparent 32%),
+                linear-gradient(135deg, #f8fafc 0%, #eef6ff 48%, #fff7ed 100%) !important;
+        }
+        body.theme-dark {
+            --app-accent: #38bdf8;
+            --app-warm: #fbbf24;
+            --app-rose: #fb7185;
+            --app-violet: #a78bfa;
+            --app-green: #2dd4bf;
+            --app-green-strong: #14b8a6;
+            --app-bg: #07111f;
+            --app-shell: rgba(7,17,31,0.78);
+            --app-card: rgba(10,23,39,0.90);
+            --app-border: rgba(148,163,184,0.22);
+            background:
+                radial-gradient(circle at 14% 12%, rgba(56,189,248,0.20), transparent 28%),
+                radial-gradient(circle at 88% 18%, rgba(251,191,36,0.14), transparent 27%),
+                radial-gradient(circle at 76% 84%, rgba(167,139,250,0.16), transparent 34%),
+                linear-gradient(135deg, #06111f 0%, #111827 52%, #1f1328 100%) !important;
+        }
+        body.theme-light::before,
+        body.theme-dark::before {
+            background:
+                linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,158,11,0.04) 1px, transparent 1px) !important;
+        }
+        body {
+            --theme-color: var(--app-accent) !important;
+            --btn-color: var(--app-accent) !important;
+        }
+        .header-top {
+            justify-content: space-between !important;
+            text-align: left !important;
+        }
+        .brand-block {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: left !important;
+        }
+        #ui-title {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .brand-logo-img {
+            width: auto !important;
+            height: clamp(86px, 10vw, 132px) !important;
+            max-width: min(360px, 52vw) !important;
+            max-height: none !important;
+            margin: 0 auto 0 0 !important;
+            object-fit: contain !important;
+            object-position: left center !important;
+        }
+        .menu-grid.fg-menu-v4 {
+            grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)) !important;
+            gap: clamp(18px, 2.1vw, 26px) !important;
+        }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(1) { --tile-a: #60a5fa !important; --tile-b: #f59e0b !important; --tile-label: #93c5fd; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(2) { --tile-a: #ef4444 !important; --tile-b: #f97316 !important; --tile-label: #fca5a5; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(3) { --tile-a: #ec4899 !important; --tile-b: #3b82f6 !important; --tile-label: #f9a8d4; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(4) { --tile-a: #be123c !important; --tile-b: #facc15 !important; --tile-label: #fb7185; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(5) { --tile-a: #f59e0b !important; --tile-b: #22c55e !important; --tile-label: #fbbf24; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(6) { --tile-a: #dc2626 !important; --tile-b: #2563eb !important; --tile-label: #f87171; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(7) { --tile-a: #06b6d4 !important; --tile-b: #a855f7 !important; --tile-label: #67e8f9; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(8) { --tile-a: #c06f26 !important; --tile-b: #fbbf24 !important; --tile-label: #fdba74; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(9) { --tile-a: #8b5cf6 !important; --tile-b: #22d3ee !important; --tile-label: #c4b5fd; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(10) { --tile-a: #2563eb !important; --tile-b: #f472b6 !important; --tile-label: #93c5fd; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(11) { --tile-a: #f97316 !important; --tile-b: #38bdf8 !important; --tile-label: #fdba74; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(12) { --tile-a: #22c55e !important; --tile-b: #06b6d4 !important; --tile-label: #86efac; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(1) { border-color: rgba(96,165,250,0.46) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(2) { border-color: rgba(239,68,68,0.46) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(3) { border-color: rgba(236,72,153,0.46) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(4) { border-color: rgba(251,113,133,0.46) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(5) { border-color: rgba(245,158,11,0.50) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(6) { border-color: rgba(220,38,38,0.48) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(7) { border-color: rgba(6,182,212,0.48) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(8) { border-color: rgba(192,111,38,0.52) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(9) { border-color: rgba(139,92,246,0.50) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(10) { border-color: rgba(37,99,235,0.46) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(11) { border-color: rgba(249,115,22,0.50) !important; }
+        .menu-grid.fg-menu-v4 .fg-tile:nth-child(12) { border-color: rgba(34,197,94,0.48) !important; }
+        .menu-card.fg-tile,
+        .game-card-item.fg-tile {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015)),
+                radial-gradient(circle at 22% 12%, color-mix(in srgb, var(--tile-a) 24%, transparent), transparent 42%),
+                radial-gradient(circle at 82% 82%, color-mix(in srgb, var(--tile-b) 18%, transparent), transparent 46%),
+                var(--app-card) !important;
+            box-shadow: 0 18px 38px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+            overflow: hidden;
+        }
+        body.theme-light .menu-card.fg-tile,
+        body.theme-light .game-card-item.fg-tile {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.78)),
+                radial-gradient(circle at 22% 12%, color-mix(in srgb, var(--tile-a) 18%, transparent), transparent 42%),
+                radial-gradient(circle at 82% 82%, color-mix(in srgb, var(--tile-b) 15%, transparent), transparent 46%) !important;
+            box-shadow: 0 18px 38px rgba(15,23,42,0.14), inset 0 1px 0 rgba(255,255,255,0.76) !important;
+        }
+        .menu-card.fg-tile::after {
+            background: radial-gradient(circle, color-mix(in srgb, var(--tile-b) 22%, transparent), transparent 70%) !important;
+        }
+        .menu-card.fg-tile:hover,
+        .game-card-item.fg-tile:hover {
+            border-color: color-mix(in srgb, var(--tile-a) 78%, white) !important;
+            box-shadow: 0 24px 48px color-mix(in srgb, var(--tile-a) 22%, rgba(0,0,0,0.28)) !important;
+        }
+        .fg-menu-image {
+            width: min(136px, 64%) !important;
+            height: min(136px, 64%) !important;
+            padding: 3px !important;
+            margin: 0 0 14px !important;
+            border-radius: 18px !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            filter: drop-shadow(0 18px 20px rgba(0,0,0,0.22)) saturate(1.06) !important;
+            transform-origin: center;
+        }
+        .menu-card.fg-tile:hover .fg-menu-image {
+            transform: translateY(-4px) scale(1.035) !important;
+        }
+        .menu-card.fg-tile h3 {
+            color: var(--tile-label, var(--app-accent)) !important;
+            text-shadow: 0 2px 12px color-mix(in srgb, var(--tile-a) 30%, transparent) !important;
+        }
+        body.theme-light .menu-card.fg-tile h3 {
+            color: color-mix(in srgb, var(--tile-a) 72%, #111827) !important;
+            text-shadow: none !important;
+        }
+        #page-board-menu,
+        #page-chess { --theme-color: #3b82f6 !important; --btn-color: #3b82f6 !important; }
+        #page-cchess { --theme-color: #dc2626 !important; --btn-color: #dc2626 !important; }
+        #page-horse,
+        #page-horse-menu { --theme-color: #ec4899 !important; --btn-color: #ec4899 !important; }
+        #page-werewolf,
+        #page-werewolf-menu { --theme-color: #be123c !important; --btn-color: #be123c !important; }
+        #page-monopoly,
+        #page-monopoly-menu { --theme-color: #f59e0b !important; --btn-color: #f59e0b !important; }
+        #page-uno,
+        #page-uno-menu { --theme-color: #dc2626 !important; --btn-color: #dc2626 !important; }
+        #page-line98 { --theme-color: #06b6d4 !important; --btn-color: #06b6d4 !important; }
+        #page-oanquan,
+        #page-oanquan-menu { --theme-color: #c06f26 !important; --btn-color: #c06f26 !important; }
+        #page-block,
+        #page-block-menu,
+        #page-block-journey { --theme-color: #8b5cf6 !important; --btn-color: #8b5cf6 !important; }
+        #page-sudoku,
+        #page-sudoku-menu { --theme-color: #2563eb !important; --btn-color: #2563eb !important; }
+        #page-ttt,
+        #page-ttt-menu { --theme-color: #f97316 !important; --btn-color: #f97316 !important; }
+        #page-snake,
+        #page-snake-menu { --theme-color: #22c55e !important; --btn-color: #22c55e !important; }
+        [id^="page-"] h2,
+        [id^="page-"] h3,
+        .horse-title,
+        #ui-h,
+        #page-uno .horse-title,
+        #page-monopoly .horse-title,
+        #page-werewolf .horse-title {
+            color: var(--theme-color) !important;
+        }
+        body.theme-dark [id^="page-"] h2,
+        body.theme-dark [id^="page-"] h3,
+        body.theme-dark .horse-title,
+        body.theme-dark #ui-h,
+        body.theme-dark #page-uno .horse-title,
+        body.theme-dark #page-monopoly .horse-title,
+        body.theme-dark #page-werewolf .horse-title {
+            color: color-mix(in srgb, var(--theme-color) 70%, #ffffff) !important;
+        }
+        #page-menu .menu-card.fg-tile h3 {
+            color: var(--tile-label, var(--app-accent)) !important;
+            text-shadow: 0 2px 12px color-mix(in srgb, var(--tile-a) 30%, transparent) !important;
+        }
+        body.theme-light #page-menu .menu-card.fg-tile h3 {
+            color: color-mix(in srgb, var(--tile-a) 72%, #111827) !important;
+            text-shadow: none !important;
+        }
+        @media (max-width: 768px) {
+            .brand-block,
+            #ui-title {
+                justify-content: flex-start !important;
+            }
+            .brand-logo-img {
+                height: clamp(74px, 22vw, 108px) !important;
+                max-width: min(260px, 66vw) !important;
+            }
+            .menu-grid.fg-menu-v4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            .fg-menu-image {
+                width: min(118px, 68%) !important;
+                height: min(118px, 68%) !important;
+            }
+            #page-menu .top-actions,
+            #page-menu #auth-section,
+            #page-menu .quick-controls {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            #page-menu .quick-controls {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+            }
+            #btn-login,
+            #btn-logout,
+            #btn-music,
+            #btn-theme,
+            #btn-lang {
+                width: 100% !important;
+                min-width: 0 !important;
+                white-space: normal !important;
+                text-align: center !important;
+            }
+            #btn-lang {
+                grid-column: 1 / -1 !important;
+            }
+        }
+
+        /* Chat and Monopoly avatar refresh. Keeps existing IDs/classes and only changes presentation. */
+        .online-comms {
+            width: min(410px, calc(100vw - 28px)) !important;
+            max-height: min(62vh, 540px) !important;
+            right: 18px !important;
+            bottom: 18px !important;
+            border-radius: 22px !important;
+            border: 1px solid rgba(255,255,255,0.22) !important;
+            background:
+                linear-gradient(180deg, rgba(15,23,42,0.88), rgba(9,18,32,0.78)),
+                radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--theme-color) 32%, transparent), transparent 44%) !important;
+            box-shadow: 0 26px 70px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.16) !important;
+            backdrop-filter: blur(22px) saturate(1.18) !important;
+            -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
+        }
+        .online-comms-header {
+            min-height: 52px !important;
+            padding: 12px 14px !important;
+            background:
+                linear-gradient(135deg, color-mix(in srgb, var(--theme-color) 74%, #0f172a), #111827) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.13);
+        }
+        .online-comms-title {
+            font-size: 0.94rem !important;
+            letter-spacing: 0 !important;
+        }
+        .online-comms-tools {
+            gap: 6px !important;
+        }
+        .comm-icon-btn {
+            min-width: 32px !important;
+            height: 32px !important;
+            border-radius: 999px !important;
+            border: 1px solid rgba(255,255,255,0.22) !important;
+            background: rgba(255,255,255,0.10) !important;
+            color: #eef6ff !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+        }
+        .comm-icon-btn:hover {
+            background: rgba(255,255,255,0.18) !important;
+            transform: translateY(-1px);
+        }
+        .comm-icon-btn.off {
+            background: rgba(244,63,94,0.88) !important;
+            color: #ffffff !important;
+        }
+        .online-chat-log {
+            height: min(30vh, 240px) !important;
+            min-height: 150px !important;
+            padding: 14px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            background:
+                radial-gradient(circle at 18% 0%, rgba(255,255,255,0.08), transparent 34%),
+                rgba(2,8,23,0.45) !important;
+            scrollbar-width: thin;
+        }
+        .chat-row {
+            width: min(86%, 280px);
+            display: grid !important;
+            gap: 4px !important;
+            align-self: flex-start;
+            padding: 10px 12px;
+            border-radius: 16px 16px 16px 5px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: #e5eefb !important;
+            box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+        }
+        .chat-row.mine {
+            align-self: flex-end;
+            border-radius: 16px 16px 5px 16px;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--theme-color) 76%, #ffffff), color-mix(in srgb, var(--theme-color) 72%, #0f172a));
+            color: #ffffff !important;
+        }
+        .chat-row strong {
+            color: color-mix(in srgb, var(--theme-color) 48%, #ffffff) !important;
+            font-size: 0.72rem !important;
+            letter-spacing: 0 !important;
+            text-transform: none !important;
+        }
+        .chat-row.mine strong {
+            color: rgba(255,255,255,0.82) !important;
+        }
+        .chat-row span {
+            color: inherit !important;
+            overflow-wrap: anywhere;
+            line-height: 1.34;
+        }
+        .online-chat-input {
+            padding: 12px !important;
+            gap: 9px !important;
+            border-top: 1px solid rgba(255,255,255,0.10) !important;
+            background: rgba(2,8,23,0.46);
+        }
+        .online-chat-input input {
+            min-height: 42px;
+            border-radius: 999px !important;
+            border: 1px solid rgba(255,255,255,0.14) !important;
+            background: rgba(255,255,255,0.10) !important;
+            color: #f8fafc !important;
+            padding: 0 15px !important;
+        }
+        .online-chat-input input::placeholder {
+            color: rgba(226,232,240,0.64) !important;
+        }
+        .online-chat-input button {
+            min-height: 42px;
+            border-radius: 999px !important;
+            padding: 0 16px !important;
+            background: linear-gradient(135deg, var(--theme-color), color-mix(in srgb, var(--theme-color) 58%, #111827)) !important;
+            box-shadow: 0 12px 22px color-mix(in srgb, var(--theme-color) 28%, transparent);
+        }
+        .online-comms.is-mini {
+            width: min(340px, calc(100vw - 28px)) !important;
+        }
+        .online-comms.is-mini .online-comms-title {
+            max-width: 112px !important;
+        }
+        .online-comms.is-mini .comm-icon-btn:not(.comm-control-btn) {
+            min-width: 30px !important;
+            padding: 0 6px !important;
+            font-size: 0.68rem !important;
+        }
+        .online-comms.is-mini .online-chat-log {
+            height: 110px !important;
+            min-height: 96px !important;
+        }
+        .online-comms.is-large {
+            width: min(470px, calc(100vw - 28px)) !important;
+        }
+        .online-comms.is-large .online-chat-log {
+            height: min(38vh, 320px) !important;
+        }
+        .online-comms-fab {
+            min-width: 58px !important;
+            height: 50px !important;
+            border-radius: 999px !important;
+            background: linear-gradient(135deg, var(--theme-color), #111827) !important;
+            box-shadow: 0 18px 36px rgba(0,0,0,0.34) !important;
+        }
+        body.theme-light .online-comms {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.86)),
+                radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--theme-color) 20%, transparent), transparent 44%) !important;
+            border-color: rgba(15,23,42,0.10) !important;
+            box-shadow: 0 24px 58px rgba(15,23,42,0.18) !important;
+        }
+        body.theme-light .online-chat-log {
+            background: rgba(241,245,249,0.78) !important;
+        }
+        body.theme-light .chat-row {
+            background: #ffffff;
+            color: #172033 !important;
+            border-color: rgba(15,23,42,0.08);
+        }
+        body.theme-light .chat-row.mine {
+            background: linear-gradient(135deg, var(--theme-color), color-mix(in srgb, var(--theme-color) 62%, #0f172a));
+            color: #ffffff !important;
+        }
+        body.theme-light .online-chat-input {
+            background: rgba(255,255,255,0.84);
+            border-top-color: rgba(15,23,42,0.08) !important;
+        }
+        body.theme-light .online-chat-input input {
+            background: #ffffff !important;
+            color: #111827 !important;
+            border-color: rgba(15,23,42,0.12) !important;
+        }
+
+        .mono-avatar-picker {
+            overflow: hidden;
+        }
+        .mono-avatar-grid {
+            display: flex !important;
+            grid-template-columns: none !important;
+            gap: 12px !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 8px 4px 14px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+        }
+        .mono-avatar-choice {
+            flex: 0 0 132px;
+            min-height: 170px !important;
+            padding: 9px;
+            border-radius: 18px !important;
+            display: grid !important;
+            grid-template-rows: 1fr auto;
+            gap: 8px;
+            scroll-snap-align: center;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)),
+                rgba(15,23,42,0.32) !important;
+            border: 1px solid color-mix(in srgb, var(--avatar-accent, var(--theme-color)) 44%, rgba(255,255,255,0.18)) !important;
+            color: #ffffff;
+        }
+        .mono-avatar-choice.active {
+            border-color: var(--avatar-accent, var(--theme-color)) !important;
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--avatar-accent, var(--theme-color)) 20%, transparent), 0 16px 32px rgba(0,0,0,0.20) !important;
+        }
+        .mono-avatar-choice span:last-child {
+            font-size: 0.82rem;
+            font-weight: 950;
+            line-height: 1.1;
+        }
+        .mono-avatar-face {
+            --avatar-accent: #22c55e;
+            position: relative;
+            display: inline-block;
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #0f172a !important;
+            border: 2px solid rgba(255,255,255,0.84);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.26), 0 0 0 3px color-mix(in srgb, var(--avatar-accent) 20%, transparent);
+            vertical-align: middle;
+            flex: 0 0 auto;
+        }
+        .mono-avatar-face::before,
+        .mono-avatar-face::after,
+        #page-monopoly .mono-token::after {
+            content: none !important;
+            display: none !important;
+        }
+        .mono-avatar-face img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 18%;
+        }
+        .mono-avatar-choice .mono-avatar-face {
+            width: 112px;
+            height: 132px;
+            border-radius: 16px;
+            justify-self: center;
+        }
+        #page-monopoly .mono-avatar-hero {
+            width: clamp(72px, 8.4vw, 112px) !important;
+            height: clamp(72px, 8.4vw, 112px) !important;
+            border-radius: 24px;
+        }
+        #page-monopoly .mono-avatar-score {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 13px;
+        }
+        #page-monopoly .mono-avatar-card {
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 14px;
+            margin-right: 9px;
+        }
+        #page-monopoly .mono-token {
+            display: grid !important;
+            place-items: center !important;
+            padding: 0 !important;
+            background: transparent !important;
+            border: 0 !important;
+            overflow: visible !important;
+        }
+        #page-monopoly .mono-avatar-board {
+            width: 100% !important;
+            height: 100% !important;
+            min-width: 22px;
+            min-height: 22px;
+            border-radius: 50%;
+            border-width: 2px;
+        }
+        #page-monopoly .mono-player-hero {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)),
+                radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--theme-color) 24%, transparent), transparent 38%) !important;
+        }
+        #page-monopoly .mono-portrait-slot {
+            display: grid;
+            place-items: center;
+        }
+        #page-monopoly .mono-score-chip.in-debt {
+            border-color: rgba(251,191,36,0.8) !important;
+            box-shadow: 0 0 0 3px rgba(251,191,36,0.22) !important;
+        }
+        #page-monopoly .mono-score-chip.bankrupt .mono-avatar-face,
+        #page-monopoly .mono-player-card[style*="0.45"] .mono-avatar-face {
+            filter: grayscale(1);
+        }
+        .mono-sell-panel {
+            width: min(100%, 760px);
+            display: grid;
+            gap: 8px;
+            justify-self: center;
+        }
+        .mono-sell-note {
+            padding: 9px 12px;
+            border-radius: 12px;
+            background: rgba(251,191,36,0.18);
+            border: 1px solid rgba(251,191,36,0.34);
+            color: #fff7ed;
+            font-weight: 900;
+            text-align: center;
+        }
+        .mono-sell-list {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scroll-snap-type: x mandatory;
+        }
+        .mono-sell-btn {
+            flex: 0 0 160px;
+            min-height: 58px;
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f59e0b, #b45309);
+            color: #ffffff;
+            font-weight: 950;
+            cursor: pointer;
+            scroll-snap-align: start;
+            box-shadow: 0 12px 22px rgba(0,0,0,0.20);
+        }
+        .mono-sell-btn span {
+            display: block;
+            font-size: 0.76rem;
+            opacity: 0.86;
+            margin-top: 3px;
+        }
+        body.theme-light .mono-avatar-choice {
+            background: rgba(255,255,255,0.88) !important;
+            color: #172033;
+            border-color: color-mix(in srgb, var(--avatar-accent, var(--theme-color)) 42%, rgba(15,23,42,0.10)) !important;
+        }
+        body.theme-light .mono-sell-note {
+            background: #fff7ed;
+            color: #92400e;
+            border-color: rgba(245,158,11,0.34);
+        }
         </style>
 </head>
 <body>
@@ -7815,6 +9358,68 @@
         <button class="btn btn-outline" data-i18n="later" onclick="closeGameIntro()" style="margin:0; flex:1; --btn-color:#64748b;">ĐỂ SAU</button>
     </div>
 </div>
+
+<button id="social-fab" class="social-fab" onclick="toggleSocialPanel()" aria-label="Mở bạn bè">Bạn bè</button>
+<aside id="social-panel" class="social-panel" aria-hidden="true">
+    <div class="social-header">
+        <div class="social-title">FAST CONNECT</div>
+        <button class="social-icon-btn" onclick="toggleSocialPanel(false)" aria-label="Đóng bạn bè">×</button>
+    </div>
+    <div class="social-profile">
+        <button class="social-avatar-btn" id="social-avatar-btn" onclick="openAvatarPicker()" title="Đổi ảnh đại diện" aria-label="Đổi ảnh đại diện">
+            <img id="social-avatar-img" alt="">
+            <span id="social-avatar-initial">U</span>
+        </button>
+        <input id="social-avatar-file" class="hidden" type="file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="uploadSocialAvatar(event)">
+        <div class="social-profile-main">
+            <div id="social-profile-name" class="social-name">Chưa đăng nhập</div>
+            <div class="social-status-line">
+                <span id="social-profile-dot" class="status-dot offline"></span>
+                <span id="social-profile-status">Offline</span>
+            </div>
+            <div id="social-avatar-status" class="social-avatar-status"></div>
+        </div>
+        <div class="social-status-wrap">
+            <button class="social-status-btn" onclick="toggleSocialStatusMenu()">Trạng thái</button>
+            <div id="social-status-menu" class="social-status-menu hidden">
+                <button onclick="setSocialStatus('online')"><span class="status-dot online"></span>Online</button>
+                <button onclick="setSocialStatus('busy')"><span class="status-dot busy"></span>Bận</button>
+                <button onclick="setSocialStatus('away')"><span class="status-dot away"></span>Đi vắng</button>
+                <button onclick="setSocialStatus('gaming')"><span class="status-dot gaming"></span>Gaming</button>
+                <button onclick="setSocialStatus('invisible')"><span class="status-dot invisible"></span>Ẩn</button>
+                <button onclick="openAvatarPicker()">Đổi ảnh đại diện</button>
+            </div>
+        </div>
+    </div>
+    <div class="social-search">
+        <input id="social-search-input" type="text" maxlength="24" placeholder="Tìm username..." onkeydown="if(event.key==='Enter') searchSocialUser()">
+        <button onclick="searchSocialUser()" aria-label="Tìm bạn">+</button>
+    </div>
+    <div id="social-search-result" class="social-search-result"></div>
+    <div class="social-tabs">
+        <button id="social-tab-friends" class="social-tab active" onclick="setSocialTab('friends')">Bạn bè</button>
+        <button id="social-tab-requests" class="social-tab" onclick="setSocialTab('requests')">Lời mời</button>
+    </div>
+    <div id="social-list" class="social-list"></div>
+    <div id="social-chat-pane" class="social-chat-pane">
+        <div class="social-chat-head">
+            <button class="social-icon-btn" onclick="closeSocialChat()" aria-label="Quay lại">‹</button>
+            <span id="social-chat-avatar" class="social-avatar"><span>U</span></span>
+            <div class="social-profile-main">
+                <div id="social-chat-name" class="social-name">Chat</div>
+                <div class="social-status-line">
+                    <span id="social-chat-dot" class="status-dot offline"></span>
+                    <span id="social-chat-status">Offline</span>
+                </div>
+            </div>
+        </div>
+        <div id="social-chat-log" class="social-chat-log"></div>
+        <div class="social-chat-input">
+            <input id="social-chat-input" type="text" maxlength="500" placeholder="Nhập tin nhắn..." onkeydown="if(event.key==='Enter') sendSocialMessage()">
+            <button onclick="sendSocialMessage()">Gửi</button>
+        </div>
+    </div>
+</aside>
 
 <div class="container-box">
     
@@ -8713,6 +10318,7 @@
                 <button class="btn btn-outline" data-i18n="history" onclick="openMode('history', 'uno')" style="width:auto; padding:10px 18px; border-radius:15px; font-weight:900; margin:0;">LỊCH SỬ</button>
             </div>
             <div class="uno-table">
+                <div id="uno-turn-banner" class="uno-turn-banner"></div>
                 <div id="uno-players" class="uno-players"></div>
                 <div class="uno-center">
                     <div id="uno-deck" class="uno-card uno-back" onclick="drawUnoCard()">UNO</div>
@@ -8808,7 +10414,16 @@
     // ==========================================
     // HỆ THỐNG TÀI KHOẢN LƯU TRỮ LỊCH SỬ
     // ==========================================
+    const SUPABASE_URL = 'https://hbuuilwcmicnpubgbiuz.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_3Od15qz59SnELEo59-MDsg_zzCu5FT_';
+    const AUTH_EMAIL_DOMAIN = 'fast-games.local';
+    const supabaseClient = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+        : null;
+
     let currentUser = localStorage.getItem('ecoHub_currentUser') || null;
+    let currentAuthUser = null;
+    let currentProfile = null;
     
     function showAuthModal() {
         document.getElementById('authModal').style.display = 'block';
@@ -8819,8 +10434,87 @@
         document.getElementById('authModal').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
     }
+
+    function normalizeUsername(username) {
+        return username.trim().toLowerCase();
+    }
+
+    function getAuthEmailFromUsername(usernameKey) {
+        return `${usernameKey}@${AUTH_EMAIL_DOMAIN}`;
+    }
+
+    function showSupabaseSetupError(error) {
+        console.error('Supabase setup error:', error);
+        alert('Supabase đã kết nối, nhưng bảng profiles/policy có thể chưa được tạo. Hãy chạy SQL ở bước tạo bảng trong Supabase rồi thử lại.');
+    }
+
+    async function ensureSupabaseProfile(authUser, preferredUsername = '') {
+        if (!supabaseClient || !authUser) return null;
+
+        const { data: existing, error: selectError } = await supabaseClient
+            .from('profiles')
+            .select('id, username, username_key, display_name, avatar_url, status')
+            .eq('id', authUser.id)
+            .maybeSingle();
+
+        if (selectError) throw selectError;
+        if (existing) return existing;
+
+        const fallbackName = preferredUsername || authUser.user_metadata?.username || authUser.email?.split('@')[0] || 'player';
+        const username = fallbackName.trim();
+        const usernameKey = normalizeUsername(username);
+
+        const { data: created, error: insertError } = await supabaseClient
+            .from('profiles')
+            .insert({
+                id: authUser.id,
+                username,
+                username_key: usernameKey,
+                display_name: username,
+                status: 'online',
+                last_seen: new Date().toISOString()
+            })
+            .select('id, username, username_key, display_name, avatar_url, status')
+            .single();
+
+        if (insertError) throw insertError;
+        return created;
+    }
+
+    async function loadSupabaseSession() {
+        if (!supabaseClient) {
+            currentUser = localStorage.getItem('ecoHub_currentUser') || null;
+            updateAuthUI();
+            return;
+        }
+
+        const { data, error } = await supabaseClient.auth.getUser();
+        if (error || !data?.user) {
+            currentAuthUser = null;
+            currentProfile = null;
+            currentUser = null;
+            localStorage.removeItem('ecoHub_currentUser');
+            updateAuthUI();
+            return;
+        }
+
+        try {
+            currentAuthUser = data.user;
+            currentProfile = await ensureSupabaseProfile(data.user);
+            currentUser = currentProfile?.username || data.user.email?.split('@')[0] || null;
+            if (currentUser) localStorage.setItem('ecoHub_currentUser', currentUser);
+            updateAuthUI();
+        } catch (profileError) {
+            currentAuthUser = data.user;
+            currentProfile = null;
+            currentUser = data.user.email?.split('@')[0] || null;
+            if (currentUser) localStorage.setItem('ecoHub_currentUser', currentUser);
+            updateAuthUI();
+            showSupabaseSetupError(profileError);
+        }
+    }
     
-    function processLogin() {
+    async function processLogin() {
         const usernameInput = document.getElementById('auth-username');
         const passwordInput = document.getElementById('auth-password');
         let u = usernameInput.value.trim();
@@ -8830,38 +10524,102 @@
             return alert('Tên đăng nhập chỉ được dùng A-Z, a-z, 0-9, dấu gạch dưới, gạch ngang hoặc dấu chấm; không dùng khoảng trắng hay dấu tiếng Việt.');
         }
 
-        const key = u.toLowerCase();
-        const legacyDb = JSON.parse(localStorage.getItem('ecoHub_usersDb') || '{}');
-        const accounts = JSON.parse(localStorage.getItem('fastGames_accounts') || '{}');
-        Object.keys(legacyDb).forEach(name => {
-            const legacyKey = name.toLowerCase();
-            if (!accounts[legacyKey]) accounts[legacyKey] = { username: name, password: legacyDb[name] };
-        });
-
-        if (accounts[key]) {
-            if (accounts[key].password !== p) {
-                return alert('Sai mật khẩu! Vui lòng thử lại.');
-            }
-            u = accounts[key].username;
-            alert('Đăng nhập thành công!');
-        } else {
-            accounts[key] = { username: u, password: p, createdAt: Date.now() };
-            alert('Tạo tài khoản mới và đăng nhập thành công!');
+        if (!supabaseClient) {
+            return alert('Không tải được Supabase SDK. Hãy kiểm tra kết nối mạng rồi tải lại trang.');
         }
-        localStorage.setItem('fastGames_accounts', JSON.stringify(accounts));
-        localStorage.setItem('ecoHub_usersDb', JSON.stringify(Object.fromEntries(Object.values(accounts).map(acc => [acc.username, acc.password]))));
 
-        currentUser = u;
-        localStorage.setItem('ecoHub_currentUser', u);
-        closeAuthModal();
-        updateAuthUI();
-        
-        // Reset trắng ô nhập để bảo mật
-        usernameInput.value = '';
-        passwordInput.value = '';
+        const submitBtn = document.querySelector('#authModal button[onclick="processLogin()"]');
+        const originalBtnText = submitBtn ? submitBtn.innerText : '';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'ĐANG XỬ LÝ...';
+        }
+
+        try {
+            const usernameKey = normalizeUsername(u);
+            const authEmail = getAuthEmailFromUsername(usernameKey);
+            let { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: authEmail,
+                password: p
+            });
+
+            if (error) {
+                const signUpResult = await supabaseClient.auth.signUp({
+                    email: authEmail,
+                    password: p,
+                    options: {
+                        data: {
+                            username: u,
+                            username_key: usernameKey
+                        }
+                    }
+                });
+
+                if (signUpResult.error) {
+                    const msg = String(signUpResult.error.message || '').toLowerCase();
+                    if (msg.includes('already') || msg.includes('registered') || msg.includes('exists')) {
+                        return alert('Sai mật khẩu hoặc tên đăng nhập đã tồn tại.');
+                    }
+                    throw signUpResult.error;
+                }
+
+                data = signUpResult.data;
+                if (!data?.session) {
+                    return alert('Tài khoản đã được tạo nhưng Supabase đang bật xác nhận email. Hãy tắt Email confirmation trong Authentication > Providers > Email để dùng đăng nhập bằng username.');
+                }
+            }
+
+            if (!data?.user) {
+                const userResult = await supabaseClient.auth.getUser();
+                data = { ...data, user: userResult.data?.user };
+            }
+
+            currentAuthUser = data.user;
+            currentProfile = await ensureSupabaseProfile(data.user, u);
+            currentUser = currentProfile.username;
+            localStorage.setItem('ecoHub_currentUser', currentUser);
+
+            closeAuthModal();
+            updateAuthUI();
+            usernameInput.value = '';
+            passwordInput.value = '';
+            alert('Đăng nhập thành công!');
+        } catch (error) {
+            const code = error?.code || '';
+            const message = String(error?.message || '');
+            if (code === '23505' || message.toLowerCase().includes('duplicate')) {
+                alert('Tên đăng nhập đã tồn tại. Hãy chọn tên khác.');
+            } else if (message.toLowerCase().includes('invalid login')) {
+                alert('Sai mật khẩu hoặc tài khoản chưa tồn tại.');
+            } else if (message.toLowerCase().includes('email not confirmed')) {
+                alert('Supabase đang bật xác nhận email. Hãy tắt Email confirmation trong Authentication > Providers > Email.');
+            } else if (message.toLowerCase().includes('profiles') || code === '42P01') {
+                showSupabaseSetupError(error);
+            } else {
+                console.error(error);
+                alert('Không thể đăng nhập lúc này. Hãy kiểm tra Supabase hoặc thử lại sau.');
+            }
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalBtnText;
+            }
+        }
     }
     
-    function logout() {
+    async function logout() {
+        if (supabaseClient) {
+            if (currentAuthUser) {
+                await supabaseClient
+                    .from('profiles')
+                    .update({ status: 'offline', last_seen: new Date().toISOString() })
+                    .eq('id', currentAuthUser.id)
+                    .catch(err => console.warn('Profile offline update failed:', err));
+            }
+            await supabaseClient.auth.signOut().catch(err => console.warn('Supabase signOut failed:', err));
+        }
+        currentAuthUser = null;
+        currentProfile = null;
         currentUser = null;
         localStorage.removeItem('ecoHub_currentUser');
         updateAuthUI();
@@ -8878,11 +10636,559 @@
             document.getElementById('btn-logout').style.display = 'none';
             document.getElementById('user-greeting').style.display = 'none';
         }
+        updateSocialAuthUI();
     }
 
-    window.onload = () => {
-        currentUser = localStorage.getItem('ecoHub_currentUser') || null;
-        updateAuthUI();
+    const SOCIAL_STATUS_LABELS = {
+        online: 'Online',
+        busy: 'Bận',
+        away: 'Đi vắng',
+        gaming: 'Gaming',
+        invisible: 'Ẩn',
+        offline: 'Offline'
+    };
+    let socialTab = 'friends';
+    let socialFriendships = [];
+    let socialProfilesById = {};
+    let socialRefreshTimer = null;
+    let socialChatTimer = null;
+    let socialActiveConversationId = null;
+    let socialActiveFriend = null;
+    let socialSetupErrorShown = false;
+    let socialUnreadCount = 0;
+
+    function escapeSocialText(value) {
+        return String(value ?? '').replace(/[&<>"']/g, ch => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[ch]));
+    }
+
+    function getSocialName(profile) {
+        return profile?.display_name || profile?.username || 'Người chơi';
+    }
+
+    function getSocialInitial(profile) {
+        return getSocialName(profile).trim().slice(0, 1).toUpperCase() || 'U';
+    }
+
+    function getSocialStatus(profile) {
+        const raw = profile?.status || 'offline';
+        if (raw === 'invisible') return 'invisible';
+        const lastSeen = profile?.last_seen ? Date.parse(profile.last_seen) : 0;
+        if (!lastSeen || Date.now() - lastSeen > 90000) return 'offline';
+        return SOCIAL_STATUS_LABELS[raw] ? raw : 'online';
+    }
+
+    function getSocialStatusText(profile) {
+        return SOCIAL_STATUS_LABELS[getSocialStatus(profile)] || 'Offline';
+    }
+
+    function renderSocialAvatar(profile, className = 'social-avatar') {
+        const avatar = profile?.avatar_url ? escapeSocialText(profile.avatar_url) : '';
+        const initial = escapeSocialText(getSocialInitial(profile));
+        return `<span class="${className}${avatar ? ' has-image' : ''}">${avatar ? `<img src="${avatar}" alt="">` : ''}<span>${initial}</span></span>`;
+    }
+
+    function setSocialAvatarElement(root, profile) {
+        if (!root) return;
+        const img = root.querySelector('img');
+        const span = root.querySelector('span');
+        const avatar = profile?.avatar_url || '';
+        root.classList.toggle('has-image', !!avatar);
+        if (img) img.src = avatar;
+        if (span) span.textContent = getSocialInitial(profile);
+    }
+
+    function formatSocialTime(value) {
+        const date = value ? new Date(value) : new Date();
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function handleSocialError(error, context = '') {
+        console.warn(`Social error ${context}:`, error);
+        const message = String(error?.message || '').toLowerCase();
+        const code = error?.code || '';
+        if (!socialSetupErrorShown && (code === '42P01' || message.includes('does not exist') || message.includes('schema cache') || message.includes('bucket'))) {
+            socialSetupErrorShown = true;
+            alert('Phần bạn bè/chat cần chạy lại file supabase-fast-games-setup.sql trong Supabase SQL Editor.');
+        }
+    }
+
+    function updateSocialUnreadUI() {
+        const fab = document.getElementById('social-fab');
+        if (!fab) return;
+        fab.classList.toggle('has-unread', socialUnreadCount > 0);
+        fab.dataset.unread = socialUnreadCount > 99 ? '99+' : String(socialUnreadCount);
+    }
+
+    function updateSocialAuthUI() {
+        const fab = document.getElementById('social-fab');
+        const panel = document.getElementById('social-panel');
+        if (!fab || !panel) return;
+
+        if (!currentAuthUser) {
+            fab.classList.remove('hidden');
+            document.body.classList.remove('social-open');
+            panel.classList.remove('chat-open');
+            stopSocialPolling();
+            socialFriendships = [];
+            socialProfilesById = {};
+            socialActiveConversationId = null;
+            socialActiveFriend = null;
+            renderSocialList();
+            renderSocialProfile();
+            return;
+        }
+
+        fab.classList.remove('hidden');
+        renderSocialProfile();
+        startSocialPolling();
+    }
+
+    function renderSocialProfile() {
+        const profile = currentProfile || (currentUser ? { username: currentUser, status: 'offline' } : null);
+        const nameEl = document.getElementById('social-profile-name');
+        const statusEl = document.getElementById('social-profile-status');
+        const dotEl = document.getElementById('social-profile-dot');
+        const avatarBtn = document.getElementById('social-avatar-btn');
+        if (nameEl) nameEl.textContent = profile ? getSocialName(profile) : 'Chưa đăng nhập';
+        if (statusEl) statusEl.textContent = profile ? getSocialStatusText(profile) : 'Offline';
+        if (dotEl) dotEl.className = `status-dot ${profile ? getSocialStatus(profile) : 'offline'}`;
+        setSocialAvatarElement(avatarBtn, profile);
+    }
+
+    function setAvatarStatus(message = '', type = '') {
+        const el = document.getElementById('social-avatar-status');
+        if (!el) return;
+        el.textContent = message;
+        el.classList.toggle('error', type === 'error');
+        el.classList.toggle('ok', type === 'ok');
+    }
+
+    function toggleSocialPanel(force) {
+        if (!currentAuthUser) {
+            showAuthModal();
+            return;
+        }
+        const willOpen = typeof force === 'boolean' ? force : !document.body.classList.contains('social-open');
+        document.body.classList.toggle('social-open', willOpen);
+        const panel = document.getElementById('social-panel');
+        if (panel) panel.setAttribute('aria-hidden', willOpen ? 'false' : 'true');
+        if (willOpen) {
+            socialUnreadCount = 0;
+            updateSocialUnreadUI();
+            refreshSocialData();
+        }
+    }
+
+    function toggleSocialStatusMenu() {
+        const menu = document.getElementById('social-status-menu');
+        if (menu) menu.classList.toggle('hidden');
+    }
+
+    async function setSocialStatus(status) {
+        if (!currentAuthUser || !supabaseClient) return;
+        const nextStatus = SOCIAL_STATUS_LABELS[status] ? status : 'online';
+        currentProfile = { ...(currentProfile || {}), status: nextStatus, last_seen: new Date().toISOString() };
+        renderSocialProfile();
+        const menu = document.getElementById('social-status-menu');
+        if (menu) menu.classList.add('hidden');
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update({ status: nextStatus, last_seen: new Date().toISOString() })
+            .eq('id', currentAuthUser.id);
+        if (error) handleSocialError(error, 'set status');
+        refreshSocialData();
+    }
+
+    async function touchSocialPresence() {
+        if (!currentAuthUser || !supabaseClient || !currentProfile) return;
+        const status = currentProfile.status || 'online';
+        const now = new Date().toISOString();
+        currentProfile.last_seen = now;
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update({ status, last_seen: now })
+            .eq('id', currentAuthUser.id);
+        if (error) console.warn('Presence update failed:', error);
+        renderSocialProfile();
+    }
+
+    function startSocialPolling() {
+        if (socialRefreshTimer) return;
+        touchSocialPresence();
+        refreshSocialData();
+        socialRefreshTimer = setInterval(() => {
+            touchSocialPresence();
+            refreshSocialData();
+        }, 15000);
+    }
+
+    function stopSocialPolling() {
+        if (socialRefreshTimer) clearInterval(socialRefreshTimer);
+        if (socialChatTimer) clearInterval(socialChatTimer);
+        socialRefreshTimer = null;
+        socialChatTimer = null;
+    }
+
+    async function refreshSocialData() {
+        if (!currentAuthUser || !supabaseClient) return;
+        const { data, error } = await supabaseClient
+            .from('friendships')
+            .select(`
+                id,
+                requester_id,
+                receiver_id,
+                status,
+                created_at,
+                requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url, status, last_seen),
+                receiver:profiles!friendships_receiver_id_fkey(id, username, display_name, avatar_url, status, last_seen)
+            `)
+            .or(`requester_id.eq.${currentAuthUser.id},receiver_id.eq.${currentAuthUser.id}`)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            handleSocialError(error, 'refresh');
+            return;
+        }
+
+        socialFriendships = data || [];
+        socialProfilesById = {};
+        socialFriendships.forEach(row => {
+            if (row.requester) socialProfilesById[row.requester.id] = row.requester;
+            if (row.receiver) socialProfilesById[row.receiver.id] = row.receiver;
+        });
+        renderSocialList();
+        if (socialActiveFriend?.id && socialProfilesById[socialActiveFriend.id]) {
+            socialActiveFriend = socialProfilesById[socialActiveFriend.id];
+            renderSocialChatHeader();
+        }
+    }
+
+    function setSocialTab(tab) {
+        socialTab = tab === 'requests' ? 'requests' : 'friends';
+        document.getElementById('social-tab-friends')?.classList.toggle('active', socialTab === 'friends');
+        document.getElementById('social-tab-requests')?.classList.toggle('active', socialTab === 'requests');
+        renderSocialList();
+    }
+
+    function getOtherFriendProfile(row) {
+        return row.requester_id === currentAuthUser?.id ? row.receiver : row.requester;
+    }
+
+    function renderSocialList() {
+        const list = document.getElementById('social-list');
+        if (!list) return;
+        if (!currentAuthUser) {
+            list.innerHTML = '<div class="social-empty">Đăng nhập để dùng bạn bè và chat.</div>';
+            return;
+        }
+
+        if (socialTab === 'requests') {
+            const pending = socialFriendships.filter(row => row.status === 'pending');
+            if (!pending.length) {
+                list.innerHTML = '<div class="social-empty">Chưa có lời mời kết bạn.</div>';
+                return;
+            }
+            list.innerHTML = pending.map(row => {
+                const isIncoming = row.receiver_id === currentAuthUser.id;
+                const profile = getOtherFriendProfile(row);
+                return `
+                    <div class="friend-row">
+                        ${renderSocialAvatar(profile)}
+                        <div class="friend-main">
+                            <div class="friend-name">${escapeSocialText(getSocialName(profile))}</div>
+                            <div class="friend-meta">${isIncoming ? 'Đã gửi lời mời cho bạn' : 'Đang chờ chấp nhận'}</div>
+                        </div>
+                        <div class="friend-actions">
+                            ${isIncoming ? `<button class="primary" onclick="acceptFriendRequest('${row.id}')">Nhận</button>` : ''}
+                            <button class="danger" onclick="removeFriendship('${row.id}')">${isIncoming ? 'Từ chối' : 'Huỷ'}</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            return;
+        }
+
+        const friends = socialFriendships.filter(row => row.status === 'accepted');
+        if (!friends.length) {
+            list.innerHTML = '<div class="social-empty">Chưa có bạn bè. Tìm username để gửi lời mời.</div>';
+            return;
+        }
+        list.innerHTML = friends.map(row => {
+            const profile = getOtherFriendProfile(row);
+            const status = getSocialStatus(profile);
+            return `
+                <div class="friend-row">
+                    ${renderSocialAvatar(profile)}
+                    <div class="friend-main" onclick="openSocialChatByUser('${profile.id}')">
+                        <div class="friend-name">${escapeSocialText(getSocialName(profile))}</div>
+                        <div class="friend-meta"><span class="status-dot ${status}"></span>${escapeSocialText(getSocialStatusText(profile))}</div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="primary" onclick="openSocialChatByUser('${profile.id}')">Chat</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function searchSocialUser() {
+        if (!currentAuthUser || !supabaseClient) {
+            showAuthModal();
+            return;
+        }
+        const input = document.getElementById('social-search-input');
+        const result = document.getElementById('social-search-result');
+        const username = input?.value.trim() || '';
+        if (!/^[A-Za-z0-9_.-]{3,20}$/.test(username)) {
+            if (result) result.innerHTML = '<div class="social-empty">Nhập username hợp lệ từ 3-20 ký tự.</div>';
+            return;
+        }
+        const usernameKey = normalizeUsername(username);
+        const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('id, username, display_name, avatar_url, status, last_seen')
+            .eq('username_key', usernameKey)
+            .maybeSingle();
+
+        if (error) {
+            handleSocialError(error, 'search');
+            return;
+        }
+        if (!data) {
+            if (result) result.innerHTML = '<div class="social-empty">Không tìm thấy người chơi.</div>';
+            return;
+        }
+        if (data.id === currentAuthUser.id) {
+            if (result) result.innerHTML = '<div class="social-empty">Đây là tài khoản của bạn.</div>';
+            return;
+        }
+
+        const existing = socialFriendships.find(row =>
+            (row.requester_id === currentAuthUser.id && row.receiver_id === data.id) ||
+            (row.receiver_id === currentAuthUser.id && row.requester_id === data.id)
+        );
+        let actionHtml = `<button class="social-mini-btn primary" onclick="sendFriendRequest('${data.id}')">Thêm bạn</button>`;
+        if (existing?.status === 'accepted') actionHtml = '<span class="friend-meta">Đã là bạn bè</span>';
+        if (existing?.status === 'pending') actionHtml = '<span class="friend-meta">Đang chờ</span>';
+        const status = getSocialStatus(data);
+        if (result) {
+            result.innerHTML = `
+                <div class="friend-row">
+                    ${renderSocialAvatar(data)}
+                    <div class="friend-main">
+                        <div class="friend-name">${escapeSocialText(getSocialName(data))}</div>
+                        <div class="friend-meta"><span class="status-dot ${status}"></span>${escapeSocialText(getSocialStatusText(data))}</div>
+                    </div>
+                    <div class="friend-actions">${actionHtml}</div>
+                </div>
+            `;
+        }
+    }
+
+    async function sendFriendRequest(receiverId) {
+        if (!currentAuthUser || !receiverId) return;
+        const { error } = await supabaseClient
+            .from('friendships')
+            .insert({ requester_id: currentAuthUser.id, receiver_id: receiverId, status: 'pending' });
+        if (error) {
+            if (error.code === '23505') alert('Bạn đã gửi lời mời hoặc đã là bạn bè.');
+            else handleSocialError(error, 'send friend request');
+            return;
+        }
+        document.getElementById('social-search-result').innerHTML = '<div class="social-empty">Đã gửi lời mời kết bạn.</div>';
+        refreshSocialData();
+    }
+
+    async function acceptFriendRequest(friendshipId) {
+        const { error } = await supabaseClient
+            .from('friendships')
+            .update({ status: 'accepted' })
+            .eq('id', friendshipId)
+            .eq('receiver_id', currentAuthUser.id);
+        if (error) handleSocialError(error, 'accept friend');
+        refreshSocialData();
+    }
+
+    async function removeFriendship(friendshipId) {
+        const { error } = await supabaseClient
+            .from('friendships')
+            .delete()
+            .eq('id', friendshipId);
+        if (error) handleSocialError(error, 'remove friend');
+        refreshSocialData();
+    }
+
+    async function openSocialChatByUser(userId) {
+        const friend = socialProfilesById[userId];
+        if (!friend || !currentAuthUser) return;
+        const { data, error } = await supabaseClient.rpc('get_or_create_direct_conversation', {
+            other_user_id: userId
+        });
+        if (error) {
+            handleSocialError(error, 'open chat');
+            if (!String(error.message || '').toLowerCase().includes('not friends')) {
+                alert('Chưa mở được chat. Hãy chạy lại file SQL mới nhất nếu bạn chưa chạy sau khi thêm panel.');
+            }
+            return;
+        }
+        socialActiveConversationId = data;
+        socialActiveFriend = friend;
+        document.getElementById('social-panel')?.classList.add('chat-open');
+        renderSocialChatHeader();
+        await loadSocialMessages();
+        if (socialChatTimer) clearInterval(socialChatTimer);
+        socialChatTimer = setInterval(loadSocialMessages, 3000);
+    }
+
+    function renderSocialChatHeader() {
+        const nameEl = document.getElementById('social-chat-name');
+        const statusEl = document.getElementById('social-chat-status');
+        const dotEl = document.getElementById('social-chat-dot');
+        const avatarEl = document.getElementById('social-chat-avatar');
+        if (nameEl) nameEl.textContent = getSocialName(socialActiveFriend);
+        if (statusEl) statusEl.textContent = getSocialStatusText(socialActiveFriend);
+        if (dotEl) dotEl.className = `status-dot ${getSocialStatus(socialActiveFriend)}`;
+        if (avatarEl) avatarEl.outerHTML = renderSocialAvatar(socialActiveFriend, 'social-avatar');
+        const newAvatar = document.getElementById('social-chat-pane')?.querySelector('.social-chat-head .social-avatar');
+        if (newAvatar) newAvatar.id = 'social-chat-avatar';
+    }
+
+    function closeSocialChat() {
+        document.getElementById('social-panel')?.classList.remove('chat-open');
+        socialActiveConversationId = null;
+        socialActiveFriend = null;
+        if (socialChatTimer) clearInterval(socialChatTimer);
+        socialChatTimer = null;
+    }
+
+    async function loadSocialMessages() {
+        if (!socialActiveConversationId || !currentAuthUser) return;
+        const { data, error } = await supabaseClient
+            .from('messages')
+            .select('id, sender_id, body, created_at')
+            .eq('conversation_id', socialActiveConversationId)
+            .order('created_at', { ascending: false })
+            .limit(80);
+        if (error) {
+            handleSocialError(error, 'load messages');
+            return;
+        }
+        const messages = (data || []).reverse();
+        const log = document.getElementById('social-chat-log');
+        if (!log) return;
+        if (!messages.length) {
+            log.innerHTML = '<div class="social-empty">Chưa có tin nhắn.</div>';
+            return;
+        }
+        log.innerHTML = messages.map(msg => {
+            const mine = msg.sender_id === currentAuthUser.id;
+            return `
+                <div class="social-message${mine ? ' mine' : ''}">
+                    <div>${escapeSocialText(msg.body)}</div>
+                    <div class="social-message-time">${formatSocialTime(msg.created_at)}</div>
+                </div>
+            `;
+        }).join('');
+        log.scrollTop = log.scrollHeight;
+    }
+
+    async function sendSocialMessage() {
+        const input = document.getElementById('social-chat-input');
+        const body = input?.value.trim().slice(0, 500) || '';
+        if (!body || !socialActiveConversationId || !currentAuthUser) return;
+        input.value = '';
+        const { error } = await supabaseClient
+            .from('messages')
+            .insert({
+                conversation_id: socialActiveConversationId,
+                sender_id: currentAuthUser.id,
+                body
+            });
+        if (error) {
+            handleSocialError(error, 'send message');
+            return;
+        }
+        loadSocialMessages();
+    }
+
+    function openAvatarPicker() {
+        if (!currentAuthUser) {
+            showAuthModal();
+            return;
+        }
+        setAvatarStatus('');
+        document.getElementById('social-status-menu')?.classList.add('hidden');
+        document.getElementById('social-avatar-file')?.click();
+    }
+
+    async function uploadSocialAvatar(event) {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file || !currentAuthUser || !supabaseClient) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Ảnh đại diện tối đa 2 MB.');
+            return;
+        }
+        if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) {
+            setAvatarStatus('Chỉ nhận PNG, JPG, WEBP hoặc GIF.', 'error');
+            return;
+        }
+        setAvatarStatus('Đang tải ảnh lên...', '');
+        const safeName = file.name.replace(/[^A-Za-z0-9_.-]/g, '-').slice(-80);
+        const path = `${currentAuthUser.id}/${Date.now()}-${safeName}`;
+        const { error: uploadError } = await supabaseClient.storage
+            .from('avatars')
+            .upload(path, file, { cacheControl: '3600', upsert: true });
+        if (uploadError) {
+            handleSocialError(uploadError, 'avatar upload');
+            const uploadMessage = String(uploadError.message || '');
+            if (uploadMessage.toLowerCase().includes('bucket')) {
+                setAvatarStatus('Thiếu bucket avatars. Hãy chạy lại file SQL mới nhất trong Supabase.', 'error');
+            } else if (uploadMessage.toLowerCase().includes('row-level') || uploadMessage.toLowerCase().includes('policy')) {
+                setAvatarStatus('Storage policy chưa đúng. Hãy chạy lại file SQL mới nhất trong Supabase.', 'error');
+            } else {
+                setAvatarStatus(`Lỗi tải avatar: ${uploadMessage || 'không rõ nguyên nhân'}`, 'error');
+            }
+            return;
+        }
+        const { data } = supabaseClient.storage.from('avatars').getPublicUrl(path);
+        const avatarUrl = data?.publicUrl;
+        if (!avatarUrl) {
+            setAvatarStatus('Không lấy được đường dẫn avatar.', 'error');
+            return;
+        }
+        const { error: profileError } = await supabaseClient
+            .from('profiles')
+            .update({ avatar_url: avatarUrl, last_seen: new Date().toISOString() })
+            .eq('id', currentAuthUser.id);
+        if (profileError) {
+            handleSocialError(profileError, 'avatar profile');
+            setAvatarStatus('Đã tải ảnh nhưng chưa cập nhật được profile.', 'error');
+            return;
+        }
+        currentProfile = { ...(currentProfile || {}), avatar_url: avatarUrl };
+        renderSocialProfile();
+        setAvatarStatus('Đã đổi ảnh đại diện.', 'ok');
+        refreshSocialData();
+    }
+
+    window.addEventListener('beforeunload', () => {
+        if (supabaseClient && currentAuthUser) {
+            supabaseClient
+                .from('profiles')
+                .update({ status: 'offline', last_seen: new Date().toISOString() })
+                .eq('id', currentAuthUser.id);
+        }
+    });
+
+    window.onload = async () => {
+        await loadSupabaseSession();
     };
 
     // ==========================================
@@ -8993,7 +11299,7 @@
     function showGameIntro(gameKey, startCallback) {
         const intro = getGameIntro(gameKey);
         pendingIntroStart = startCallback;
-        document.getElementById('introModal').style.setProperty('--theme-color', intro.color);
+        document.getElementById('introModal').style.setProperty('--theme-color', '#16a34a');
         document.getElementById('intro-title').innerText = intro.title;
         document.getElementById('intro-list').innerHTML = intro.points.map(point => `<li>${point}</li>`).join('');
         document.getElementById('introModal').style.display = 'block';
@@ -9470,7 +11776,7 @@
         if (typeof boardGameType !== 'undefined') boardGameType = selectedType;
 
         const isXiangqi = selectedType === 'cchess';
-        const themeColor = isXiangqi ? '#dc2626' : '#2563eb';
+        const themeColor = '#16a34a';
         const titleKey = isXiangqi ? 'xiangqi' : 'chess';
         const page = document.getElementById('page-board-menu');
         if (page) page.style.setProperty('--theme-color', themeColor);
@@ -11106,6 +13412,19 @@
         let h=JSON.parse(localStorage.getItem(storageKey)||'[]'); 
         h.unshift({d:new Date().toLocaleString(), r: result}); 
         localStorage.setItem(storageKey, JSON.stringify(h.slice(0,15))); 
+        if (supabaseClient && currentAuthUser) {
+            supabaseClient
+                .from('game_history')
+                .insert({
+                    user_id: currentAuthUser.id,
+                    game_key: mode,
+                    result: String(result),
+                    metadata: { local_time: new Date().toISOString() }
+                })
+                .then(({ error }) => {
+                    if (error) console.warn('Supabase game_history insert failed:', error);
+                });
+        }
     }
     
     function renderHistory(mode){ 
@@ -12420,12 +14739,11 @@
     // ==========================================
     const MONO_COLORS = ['#ef476f', '#2563eb', '#16a34a', '#f59e0b'];
     const MONO_AVATARS = [
-        { skin: '#d49264', hair: '#12322e', shirt: '#22c55e' },
-        { skin: '#f0b885', hair: '#111827', shirt: '#3b82f6' },
-        { skin: '#c98356', hair: '#3f2a1d', shirt: '#a855f7' },
-        { skin: '#e7a070', hair: '#0f172a', shirt: '#14b8a6' },
-        { skin: '#f2c59b', hair: '#7c2d12', shirt: '#ef4444' },
-        { skin: '#b7794f', hair: '#020617', shirt: '#f59e0b' }
+        { src: 'cobe.png', label: 'Cô bé', accent: '#f472b6' },
+        { src: 'caube.png', label: 'Cậu bé', accent: '#3b82f6' },
+        { src: 'cogai2.png', label: 'Cô gái hồng', accent: '#ec4899' },
+        { src: 'cogai1.png', label: 'Cô gái vàng', accent: '#f59e0b' },
+        { src: 'changtrai.png', label: 'Chàng trai', accent: '#2563eb' }
     ];
     const MONO_CELLS = [
         { type: 'go', name: 'Bắt đầu' },
@@ -12484,11 +14802,12 @@
 
     function getMonopolyAvatarStyle(player, fallbackIndex = 0) {
         const avatar = MONO_AVATARS[getMonopolyAvatarIndex(player, fallbackIndex)];
-        return `--avatar-skin:${avatar.skin}; --avatar-hair:${avatar.hair}; --avatar-shirt:${avatar.shirt};`;
+        return `--avatar-accent:${avatar.accent};`;
     }
 
     function renderMonopolyAvatar(player, className = '', fallbackIndex = 0) {
-        return `<span class="mono-avatar-face ${className}" style="${getMonopolyAvatarStyle(player, fallbackIndex)}"><span></span></span>`;
+        const avatar = MONO_AVATARS[getMonopolyAvatarIndex(player, fallbackIndex)];
+        return `<span class="mono-avatar-face ${className}" style="${getMonopolyAvatarStyle(player, fallbackIndex)}"><img src="${avatar.src}" alt="${escapeWerewolfText(avatar.label)}" loading="lazy"></span>`;
     }
 
     function selectMonopolyAvatar(index) {
@@ -12502,8 +14821,9 @@
         if (!group) return;
         const selected = getMonopolyAvatarIndex(globalOptions.monopolyAvatar);
         group.innerHTML = MONO_AVATARS.map((avatar, idx) => `
-            <button type="button" class="mono-avatar-choice${idx === selected ? ' active' : ''}" onclick="selectMonopolyAvatar(${idx})" aria-label="Avatar ${idx + 1}">
+            <button type="button" class="mono-avatar-choice${idx === selected ? ' active' : ''}" onclick="selectMonopolyAvatar(${idx})" aria-label="${escapeWerewolfText(avatar.label)}" title="${escapeWerewolfText(avatar.label)}" style="--avatar-accent:${avatar.accent};">
                 ${renderMonopolyAvatar(idx)}
+                <span>${escapeWerewolfText(avatar.label)}</span>
             </button>
         `).join('');
     }
@@ -12552,6 +14872,11 @@
             normalized.properties = Array.isArray(normalized.properties) ? normalized.properties : [];
             return normalized;
         });
+        monopolyState.players.forEach((player, idx) => {
+            player.properties = monopolyState.owners
+                .map((owner, pos) => owner === idx ? pos : null)
+                .filter(pos => pos !== null);
+        });
     }
 
     function getMonopolyBuildingLevel(index) {
@@ -12569,6 +14894,82 @@
         const meta = getMonopolyPropertyMeta(index);
         if (!meta) return 0;
         return meta.rents[getMonopolyBuildingLevel(index)] || meta.rents[0];
+    }
+
+    function getMonopolyOwnedProperties(playerIndex) {
+        if (!monopolyState || !Array.isArray(monopolyState.owners)) return [];
+        return monopolyState.owners
+            .map((owner, pos) => owner === playerIndex ? pos : null)
+            .filter(pos => pos !== null && MONO_CELLS[pos]?.type === 'property');
+    }
+
+    function getMonopolyPropertySaleValue(pos) {
+        const meta = getMonopolyPropertyMeta(pos);
+        if (!meta) return 0;
+        const level = getMonopolyBuildingLevel(pos);
+        return Math.max(100, Math.round((meta.price + meta.buildCost * level) * 0.7));
+    }
+
+    function getMonopolyDebtPrompt(playerIndex) {
+        const player = monopolyState?.players?.[playerIndex];
+        if (!player) return '';
+        if (player.bankrupt) return `${player.name} đã phá sản vì hết tiền và không còn bất động sản.`;
+        if (player.money >= 0) return '';
+        const assets = getMonopolyOwnedProperties(playerIndex);
+        if (!assets.length) return `${player.name} hết tiền và không còn bất động sản.`;
+        return `${player.name} đang âm ${formatMonoMoney(Math.abs(player.money))}. Hãy bán bất động sản để tiếp tục.`;
+    }
+
+    function appendMonopolyDebtStatus(playerIndex) {
+        const prompt = getMonopolyDebtPrompt(playerIndex);
+        if (!prompt) return;
+        if (monopolyState.players[playerIndex]?.bankrupt && monopolyState.status.includes('phá sản')) return;
+        if (!monopolyState.status.includes(prompt)) monopolyState.status = `${monopolyState.status} ${prompt}`;
+    }
+
+    function declareMonopolyBankrupt(playerIndex) {
+        const player = monopolyState?.players?.[playerIndex];
+        if (!player || player.bankrupt) return;
+        monopolyState.owners.forEach((owner, idx) => {
+            if (owner === playerIndex) monopolyState.buildings[idx] = 0;
+        });
+        monopolyState.owners = monopolyState.owners.map(owner => owner === playerIndex ? null : owner);
+        player.properties = [];
+        player.inJail = false;
+        player.jailTurns = 0;
+        player.bankrupt = true;
+        monopolyState.status = `${monopolyState.status} ${player.name} phá sản vì hết tiền và không còn bất động sản.`;
+    }
+
+    function resolveMonopolyDebt(playerIndex) {
+        const player = monopolyState?.players?.[playerIndex];
+        if (!player || player.bankrupt || player.money > 0) return false;
+        const assets = getMonopolyOwnedProperties(playerIndex);
+        if (!assets.length) {
+            declareMonopolyBankrupt(playerIndex);
+            return true;
+        }
+        player.properties = assets;
+        return false;
+    }
+
+    function renderMonopolySellActions(playerIndex) {
+        const player = monopolyState?.players?.[playerIndex];
+        const assets = getMonopolyOwnedProperties(playerIndex);
+        if (!player || player.money >= 0 || !assets.length) return '';
+        return `<div class="mono-sell-panel">
+            <div class="mono-sell-note">Đang âm ${formatMonoMoney(Math.abs(player.money))}. Bán bất động sản để tiếp tục.</div>
+            <div class="mono-sell-list">
+                ${assets.map(pos => {
+                    const cell = MONO_CELLS[pos];
+                    const level = getMonopolyBuildingLevel(pos);
+                    return `<button class="mono-sell-btn" onclick="sellMonopolyProperty(${pos})">
+                        ${escapeWerewolfText(cell.name)}
+                        <span>${getMonopolyBuildingLabel(level)} · +${formatMonoMoney(getMonopolyPropertySaleValue(pos))}</span>
+                    </button>`;
+                }).join('')}
+            </div>
+        </div>`;
     }
 
     function canBuildMonopolyAt(playerIndex, pos) {
@@ -12721,19 +15122,12 @@
     function payMonopoly(playerIndex, amount, receiverIndex = null) {
         normalizeMonopolyState();
         const player = monopolyState.players[playerIndex];
+        if (!player || player.bankrupt) return false;
         player.money -= amount;
         if (receiverIndex !== null && monopolyState.players[receiverIndex]) {
             monopolyState.players[receiverIndex].money += amount;
         }
-        if (player.money < 0) {
-            player.bankrupt = true;
-            monopolyState.owners.forEach((owner, idx) => {
-                if (owner === playerIndex) monopolyState.buildings[idx] = 0;
-            });
-            monopolyState.owners = monopolyState.owners.map(owner => owner === playerIndex ? null : owner);
-            player.properties = [];
-            monopolyState.status += ` ${player.name} phá sản.`;
-        }
+        return resolveMonopolyDebt(playerIndex);
     }
 
     function drawMonopolyCard(type, playerIndex) {
@@ -12761,6 +15155,7 @@
             player.pos = card.moveTo;
         }
         monopolyState.status = `${player.name} rút thẻ: ${card.text}.`;
+        appendMonopolyDebtStatus(playerIndex);
     }
 
     function resolveMonopolyLanding(playerIndex) {
@@ -12779,6 +15174,7 @@
                 payMonopoly(playerIndex, rent, owner);
                 monopolyState.phase = 'action';
                 monopolyState.status = `${player.name} trả tiền thuê ${formatMonoMoney(rent)} cho ${monopolyState.players[owner].name} tại ${cell.name} (${getMonopolyBuildingLabel(level)}).`;
+                appendMonopolyDebtStatus(playerIndex);
             } else {
                 monopolyState.phase = 'action';
                 if (canBuildMonopolyAt(playerIndex, player.pos)) {
@@ -12792,6 +15188,7 @@
             payMonopoly(playerIndex, cell.amount);
             monopolyState.phase = 'action';
             monopolyState.status = `${player.name} trả ${cell.name}: ${formatMonoMoney(cell.amount)}.`;
+            appendMonopolyDebtStatus(playerIndex);
         } else if (cell.type === 'chance' || cell.type === 'fortune') {
             drawMonopolyCard(cell.type, playerIndex);
             monopolyState.phase = 'action';
@@ -12861,6 +15258,11 @@
                     player.inJail = false;
                     player.jailTurns = 0;
                     monopolyState.status += ` Trả 500 để ra tù ở lượt sau.`;
+                    appendMonopolyDebtStatus(monopolyState.turn);
+                    if (checkMonopolyWinner()) {
+                        syncMonopolyState();
+                        return;
+                    }
                 }
                 monopolyState.phase = 'action';
                 renderMonopoly();
@@ -12919,12 +15321,42 @@
         maybeRunMonopolyAI();
     }
 
+    function sellMonopolyProperty(pos, isNetwork = false) {
+        normalizeMonopolyState();
+        if (!monopolyState || monopolyState.phase !== 'action' || monopolyState.gameOver) return;
+        if (!isNetwork && !canControlMonopolyTurn()) return;
+        const playerIndex = monopolyState.turn;
+        const player = monopolyState.players[playerIndex];
+        const cell = MONO_CELLS[pos];
+        if (!player || player.bankrupt || !cell || cell.type !== 'property' || monopolyState.owners[pos] !== playerIndex) return;
+        if (!isNetwork) sendMoveOnline({ type: 'MONOPOLY_SELL', pos });
+        const saleValue = getMonopolyPropertySaleValue(pos);
+        const levelLabel = getMonopolyBuildingLabel(getMonopolyBuildingLevel(pos));
+        player.money += saleValue;
+        monopolyState.owners[pos] = null;
+        monopolyState.buildings[pos] = 0;
+        player.properties = getMonopolyOwnedProperties(playerIndex);
+        monopolyState.status = `${player.name} bán ${cell.name} (${levelLabel}) và nhận ${formatMonoMoney(saleValue)}.`;
+        resolveMonopolyDebt(playerIndex);
+        appendMonopolyDebtStatus(playerIndex);
+        renderMonopoly();
+        syncMonopolyState();
+        maybeRunMonopolyAI();
+    }
+
     function endMonopolyTurn(isNetwork = false) {
         if (!monopolyState || monopolyState.phase !== 'action' || monopolyState.gameOver) return;
         if (!isNetwork && !canControlMonopolyTurn()) return;
-        if (!isNetwork) sendMoveOnline({ type: 'MONOPOLY_END' });
-        if (checkMonopolyWinner()) return;
         const player = monopolyState.players[monopolyState.turn];
+        if (player.money < 0 && getMonopolyOwnedProperties(monopolyState.turn).length) {
+            monopolyState.status = getMonopolyDebtPrompt(monopolyState.turn);
+            renderMonopoly();
+            syncMonopolyState();
+            return;
+        }
+        resolveMonopolyDebt(monopolyState.turn);
+        if (checkMonopolyWinner()) return;
+        if (!isNetwork) sendMoveOnline({ type: 'MONOPOLY_END' });
         const isDouble = monopolyState.dice[0] && monopolyState.dice[0] === monopolyState.dice[1] && !player.inJail && !player.bankrupt;
         if (isDouble) {
             monopolyState.phase = 'roll';
@@ -13028,7 +15460,8 @@
         const canRoll = canControlMonopolyTurn() && monopolyState.phase === 'roll';
         const canBuy = canControlMonopolyTurn() && monopolyState.phase === 'action' && activeCell.type === 'property' && activeOwner === null && activePlayer.money >= activeCell.price;
         const canBuild = canControlMonopolyTurn() && monopolyState.phase === 'action' && canBuildMonopolyAt(monopolyState.turn, activePos);
-        const canEnd = canControlMonopolyTurn() && monopolyState.phase === 'action';
+        const mustSell = canControlMonopolyTurn() && monopolyState.phase === 'action' && activePlayer.money < 0 && getMonopolyOwnedProperties(monopolyState.turn).length > 0;
+        const canEnd = canControlMonopolyTurn() && monopolyState.phase === 'action' && !mustSell;
         const monoIconMap = { go: 'GO', chance: '?', fortune: '$', tax: '%', jail: 'JAIL', gotojail: 'LOCK', free: 'FREE' };
         const monoCellBgMap = {
             go: '#f8fafc',
@@ -13039,25 +15472,27 @@
             fortune: '#facc15',
             tax: '#c026d3'
         };
-        const actionHtml = canBuy
-            ? `<div class="mono-board-actions two">
+        const actionHtml = mustSell
+            ? renderMonopolySellActions(monopolyState.turn)
+            : (canBuy
+                ? `<div class="mono-board-actions two">
                     <button class="mono-board-btn reject" onclick="endMonopolyTurn()">Không</button>
                     <button class="mono-board-btn accept" onclick="buyMonopolyProperty()">Có</button>
                </div>`
-            : (canBuild
-                ? `<div class="mono-board-actions two">
+                : (canBuild
+                    ? `<div class="mono-board-actions two">
                         <button class="mono-board-btn primary" onclick="buildMonopolyHouse()">Xây ${getMonopolyBuildingLabel(activeLevel + 1)}</button>
                         <button class="mono-board-btn reject" onclick="endMonopolyTurn()">Hết lượt</button>
                    </div>`
-                : (canEnd
-                    ? `<div class="mono-board-actions">
+                    : (canEnd
+                        ? `<div class="mono-board-actions">
                             <button class="mono-board-btn primary" onclick="endMonopolyTurn()">Hết lượt</button>
                        </div>`
-                    : `<div class="mono-board-actions">
+                        : `<div class="mono-board-actions">
                             <button class="mono-board-btn primary" onclick="rollMonopolyDice()" ${canRoll ? '' : 'disabled'}>${canRoll ? 'Chạm để tung xúc xắc' : (monopolyState.animating ? 'Đang di chuyển...' : 'Đợi lượt')}</button>
-                       </div>`));
+                       </div>`)));
         const playersMini = monopolyState.players.map((p, idx) => `
-            <div class="mono-score-chip${idx === monopolyState.turn ? ' active' : ''}${p.bankrupt ? ' bankrupt' : ''}">
+            <div class="mono-score-chip${idx === monopolyState.turn ? ' active' : ''}${p.bankrupt ? ' bankrupt' : ''}${p.money < 0 && !p.bankrupt ? ' in-debt' : ''}">
                 ${renderMonopolyAvatar(p, 'mono-avatar-score', idx)}
                 <strong>${escapeWerewolfText(p.name)}</strong>
                 <em>${formatMonoMoney(p.money)}</em>
@@ -13170,6 +15605,12 @@
                 return;
             }
             if (monopolyState.phase === 'action') {
+                if (player.money < 0 && getMonopolyOwnedProperties(monopolyState.turn).length) {
+                    const bestAsset = getMonopolyOwnedProperties(monopolyState.turn)
+                        .sort((a, b) => getMonopolyPropertySaleValue(b) - getMonopolyPropertySaleValue(a))[0];
+                    sellMonopolyProperty(bestAsset, true);
+                    return;
+                }
                 const cell = MONO_CELLS[player.pos];
                 if (cell && cell.type === 'property' && monopolyState.owners[player.pos] === null && player.money > cell.price + 2500) {
                     buyMonopolyProperty(true);
@@ -13200,8 +15641,9 @@
         green: 'Xanh lá',
         blue: 'Xanh dương'
     };
-    const UNO_AI_TURN_DELAY = 1500;
-    const UNO_AI_TURN_JITTER = 520;
+    const UNO_AI_TURN_DELAY = 2700;
+    const UNO_AI_TURN_JITTER = 900;
+    const UNO_PLAY_FX_DURATION = 3600;
     let myUnoIndex = 0;
     let unoState = null;
     let unoPlayFxTimer = null;
@@ -13343,10 +15785,10 @@
         clearTimeout(unoPlayFxTimer);
         if (!unoState?.playFx?.at) return;
         const age = Date.now() - unoState.playFx.at;
-        const remaining = Math.max(0, 2600 - age);
+        const remaining = Math.max(0, UNO_PLAY_FX_DURATION - age);
         unoPlayFxTimer = setTimeout(() => {
             if (!unoState?.playFx) return;
-            if (Date.now() - unoState.playFx.at >= 2500) {
+            if (Date.now() - unoState.playFx.at >= UNO_PLAY_FX_DURATION) {
                 delete unoState.playFx;
                 if (currentActiveGame === 'uno') renderUno();
             }
@@ -13490,6 +15932,8 @@
         if (options.autoUno && player.hand.length - playedCards.length === 1) unoState.unoSaid[String(playerIndex)] = true;
         indexes.forEach(idx => player.hand.splice(idx, 1));
         playedCards.forEach(played => unoState.discard.push(played));
+        delete unoState.thinkingPlayer;
+        delete unoState.thinkingStartedAt;
         unoState.playFx = {
             at: Date.now(),
             playerIndex,
@@ -13613,8 +16057,12 @@
             const seat = getUnoPlayerSeat(idx);
             const name = escapeUnoText(player.name || `Người chơi ${idx + 1}`);
             const meta = `${player.hand.length} lá · ${player.score}đ${player.bot ? ' · AI' : ''}${idx === myUnoIndex ? ' · Bạn' : ''}`;
+            const isActive = idx === unoState.turn;
+            const isThinking = isActive && player.bot && unoState.thinkingPlayer === idx;
+            const turnBadge = isActive ? `<span class="uno-turn-badge">${isThinking ? 'Đang chuẩn bị' : 'Đang đánh'}</span>` : '';
             return `
-            <div class="uno-player${idx === unoState.turn ? ' active' : ''}${idx === myUnoIndex ? ' self' : ''}" data-seat="${seat}">
+            <div class="uno-player${isActive ? ' active' : ''}${isThinking ? ' thinking' : ''}${idx === myUnoIndex ? ' self' : ''}" data-seat="${seat}">
+                ${turnBadge}
                 <span class="uno-avatar">${escapeUnoText(getUnoPlayerInitial(player.name, idx))}</span>
                 <span class="uno-player-main">
                     <strong>${name}</strong>
@@ -13660,7 +16108,7 @@
     function renderUnoDiscardPile() {
         if (!unoState?.discard?.length) return '';
         const fxAge = unoState.playFx?.at ? Date.now() - unoState.playFx.at : Infinity;
-        const hasActiveFx = Array.isArray(unoState.playFx?.cards) && unoState.playFx.cards.length && fxAge < 2500;
+        const hasActiveFx = Array.isArray(unoState.playFx?.cards) && unoState.playFx.cards.length && fxAge < UNO_PLAY_FX_DURATION;
         const cards = hasActiveFx ? unoState.playFx.cards : unoState.discard.slice(-3);
         return `<div class="uno-discard-pile">${cards.map((card, idx) => {
             const className = hasActiveFx ? 'uno-card-throw' : 'uno-card-stack';
@@ -13678,11 +16126,24 @@
         const discardBox = document.getElementById('uno-discard');
         const statusBox = document.getElementById('uno-status');
         const handBox = document.getElementById('uno-hand');
+        const turnBanner = document.getElementById('uno-turn-banner');
         if (!playersBox || !discardBox || !statusBox || !handBox || !unoState) return;
-        if (unoState.playFx?.at && Date.now() - unoState.playFx.at >= 2600) delete unoState.playFx;
+        if (unoState.playFx?.at && Date.now() - unoState.playFx.at >= UNO_PLAY_FX_DURATION) delete unoState.playFx;
         playersBox.innerHTML = renderUnoPlayers();
         discardBox.innerHTML = renderUnoDiscardPile();
-        statusBox.innerText = `${unoState.status} Màu hiện tại: ${UNO_COLOR_NAMES[unoState.color] || 'Tự do'}${unoState.pendingDraw ? ` · Đang cộng dồn ${unoState.pendingDraw} lá` : ''}`;
+        const activePlayer = unoState.players[unoState.turn];
+        const isAiThinking = activePlayer?.bot && unoState.thinkingPlayer === unoState.turn;
+        const activeName = activePlayer?.name || 'Người chơi';
+        if (turnBanner) {
+            turnBanner.innerHTML = `
+                <span>Đang tới lượt</span>
+                <strong>${escapeUnoText(activeName)}</strong>
+                <em>${isAiThinking ? 'AI đang chuẩn bị đánh...' : (canControlUnoTurn() ? 'Bạn hãy chọn lá hoặc rút bài' : 'Đợi lượt tiếp theo')}</em>
+            `;
+            turnBanner.classList.toggle('thinking', !!isAiThinking);
+            turnBanner.classList.toggle('your-turn', canControlUnoTurn());
+        }
+        statusBox.innerText = `${isAiThinking ? `${activeName} đang chuẩn bị đánh. ` : ''}${unoState.status} Màu hiện tại: ${UNO_COLOR_NAMES[unoState.color] || 'Tự do'}${unoState.pendingDraw ? ` · Đang cộng dồn ${unoState.pendingDraw} lá` : ''}`;
         const hand = unoState.players[myUnoIndex]?.hand || [];
         const canControl = canControlUnoTurn();
         handBox.innerHTML = hand.map((card, idx) => {
@@ -13719,6 +16180,9 @@
         const player = unoState.players[unoState.turn];
         if (!player || !player.bot) return;
         clearTimeout(unoState.aiTimer);
+        unoState.thinkingPlayer = unoState.turn;
+        unoState.thinkingStartedAt = Date.now();
+        renderUno();
         unoState.aiTimer = setTimeout(() => runUnoAI(), UNO_AI_TURN_DELAY + Math.random() * UNO_AI_TURN_JITTER);
     }
 
@@ -13727,6 +16191,8 @@
         const playerIndex = unoState.turn;
         const player = unoState.players[playerIndex];
         if (!player || !player.bot) return;
+        delete unoState.thinkingPlayer;
+        delete unoState.thinkingStartedAt;
 
         const playable = player.hand
             .map((card, index) => ({ card, index, score: getUnoAiCardScore(card) }))
@@ -14756,16 +17222,7 @@
     }
 
     function getOnlineTheme(game) {
-        if (game === 'chess') return '#2563eb';
-        if (game === 'cchess') return '#dc2626';
-        if (game === 'ttt') return '#d35400';
-        if (game === 'sudoku') return '#2980b9';
-        if (game === 'oanquan') return '#c06f26';
-        if (game === 'horse') return '#ef476f';
-        if (game === 'werewolf') return '#7f1d1d';
-        if (game === 'monopoly') return '#16a34a';
-        if (game === 'uno') return '#dc2626';
-        return '#27ae60';
+        return '#16a34a';
     }
 
     function getOnlineMaxPlayers(game) {
@@ -14911,7 +17368,11 @@
             box.innerHTML = '<div class="chat-row"><span style="color:#64748b;">Chưa có tin nhắn.</span></div>';
             return;
         }
-        box.innerHTML = messages.map(msg => `<div class="chat-row"><strong>${msg.name}</strong><span>${msg.text}</span></div>`).join('');
+        const selfName = getOnlineDisplayName();
+        box.innerHTML = messages.map(msg => {
+            const mine = (msg.name || '') === selfName;
+            return `<div class="chat-row${mine ? ' mine' : ''}"><strong>${escapeWerewolfText(msg.name || 'Người chơi')}</strong><span>${escapeWerewolfText(msg.text || '')}</span></div>`;
+        }).join('');
         box.scrollTop = box.scrollHeight;
     }
 
@@ -15405,6 +17866,9 @@
         } else if (data.type === 'MONOPOLY_BUILD') {
             relayOnlineMessage(data, sourceConn);
             buildMonopolyHouse(true);
+        } else if (data.type === 'MONOPOLY_SELL') {
+            relayOnlineMessage(data, sourceConn);
+            sellMonopolyProperty(data.pos, true);
         } else if (data.type === 'MONOPOLY_END') {
             relayOnlineMessage(data, sourceConn);
             endMonopolyTurn(true);
