@@ -9899,6 +9899,439 @@
             accent-color: #0f8f83;
             cursor: pointer;
         }
+        /* Auth alignment repair: fixed-height shell with safe scrolling for taller register forms. */
+        #authModal {
+            height: min(840px, calc(100dvh - 28px)) !important;
+            max-height: calc(100dvh - 28px) !important;
+        }
+        #authModal .auth-shell {
+            height: 100% !important;
+            min-height: 0 !important;
+        }
+        #authModal .auth-visual,
+        #authModal .auth-panel {
+            min-height: 0 !important;
+            box-sizing: border-box !important;
+        }
+        #authModal .auth-panel {
+            justify-content: flex-start !important;
+            overflow-y: auto !important;
+            scrollbar-width: thin;
+        }
+        #authModal .auth-tabs {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            flex: 0 0 auto !important;
+        }
+        #authModal .auth-form {
+            width: 100% !important;
+            max-width: 620px !important;
+            margin: auto 0 !important;
+        }
+        #authModal .auth-field {
+            width: 100% !important;
+        }
+        .admin-page {
+            width: min(1180px, calc(100vw - 28px));
+            margin: 0 auto;
+            color: #102033;
+        }
+        .admin-shell {
+            display: grid;
+            grid-template-columns: 0.9fr 1.25fr;
+            gap: 18px;
+            align-items: start;
+        }
+        .admin-card {
+            background: rgba(255,255,255,0.88);
+            border: 1px solid rgba(203,213,225,0.72);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 16px 42px rgba(15,23,42,0.12);
+        }
+        .admin-card h3 {
+            margin: 0 0 12px;
+            color: #0f172a;
+            font-size: 1.1rem;
+            font-weight: 950;
+        }
+        .admin-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .admin-stat {
+            border-radius: 14px;
+            padding: 12px;
+            background: linear-gradient(180deg, #ecfeff, #f8fafc);
+            border: 1px solid #dbeafe;
+        }
+        .admin-stat strong {
+            display: block;
+            font-size: 1.45rem;
+            color: #0f766e;
+            line-height: 1;
+        }
+        .admin-stat span {
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 850;
+        }
+        .admin-game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .admin-game-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-weight: 900;
+        }
+        .admin-game-toggle input {
+            width: 20px;
+            height: 20px;
+            accent-color: #0f8f83;
+        }
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .admin-btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: #0f8f83;
+            color: #ffffff;
+            font-weight: 950;
+            cursor: pointer;
+        }
+        .admin-btn.secondary {
+            background: #e2e8f0;
+            color: #102033;
+        }
+        .admin-btn.danger {
+            background: #dc2626;
+        }
+        .admin-table-wrap {
+            overflow: auto;
+            max-height: min(560px, calc(100dvh - 260px));
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+            background: #ffffff;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: middle;
+            font-size: 0.88rem;
+        }
+        .admin-table th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 950;
+        }
+        .admin-role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 950;
+            font-size: 0.78rem;
+        }
+        .admin-role-badge.banned {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .admin-status {
+            min-height: 22px;
+            margin-top: 10px;
+            color: #64748b;
+            font-weight: 850;
+            line-height: 1.35;
+        }
+        .menu-card.fg-tile.admin-game-disabled {
+            opacity: 0.42;
+            filter: grayscale(0.75);
+        }
+        .menu-card.fg-tile.admin-game-disabled::after {
+            content: "Bảo trì";
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.82);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 950;
+        }
+        /* Monopoly modern pass: keep the board frame, refresh surfaces, and host event FX. */
+        #page-monopoly:not(.hidden) {
+            background:
+                radial-gradient(circle at 18% 10%, rgba(34,197,94,0.25), transparent 22%),
+                radial-gradient(circle at 82% 78%, rgba(20,184,166,0.24), transparent 24%),
+                linear-gradient(135deg, #e9fff2 0%, #d7f8e6 45%, #eefcf6 100%) !important;
+        }
+        #page-monopoly .horse-topbar {
+            background:
+                linear-gradient(135deg, rgba(6,95,70,0.96), rgba(21,128,61,0.96) 48%, rgba(13,148,136,0.95)) !important;
+            border-color: rgba(187,247,208,0.64) !important;
+            box-shadow: 0 14px 32px rgba(6,95,70,0.26), inset 0 1px 0 rgba(255,255,255,0.32) !important;
+        }
+        #page-monopoly .monopoly-board-wrap {
+            background:
+                linear-gradient(135deg, rgba(236,253,245,0.9), rgba(134,239,172,0.64)),
+                linear-gradient(180deg, #18a653, #0f7d3a) !important;
+            border-color: rgba(4,120,87,0.92) !important;
+            box-shadow: 0 22px 55px rgba(6,78,59,0.28), inset 0 0 0 2px rgba(255,255,255,0.52) !important;
+        }
+        #page-monopoly .monopoly-board {
+            position: relative !important;
+            isolation: isolate !important;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18), transparent 38%),
+                linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(180deg, #2ed166, #0b8f43) !important;
+            background-size: auto, 38px 38px, 38px 38px, auto !important;
+        }
+        #page-monopoly .mono-center {
+            position: relative !important;
+            overflow: hidden !important;
+            border-radius: 16px !important;
+            background:
+                radial-gradient(circle at 15% 18%, rgba(255,255,255,0.34), transparent 28%),
+                linear-gradient(135deg, rgba(12,126,69,0.92), rgba(20,184,166,0.78)) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(236,253,245,0.55) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.32), 0 16px 30px rgba(6,78,59,0.18) !important;
+        }
+        #page-monopoly .mono-center::before {
+            content: "";
+            position: absolute;
+            inset: 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            pointer-events: none;
+        }
+        #page-monopoly .mono-score-chip,
+        #page-monopoly .mono-player-hero,
+        #page-monopoly .mono-message {
+            backdrop-filter: blur(10px);
+        }
+        #page-monopoly .mono-score-chip {
+            background: rgba(255,255,255,0.17) !important;
+            border-color: rgba(255,255,255,0.30) !important;
+        }
+        #page-monopoly .mono-score-chip.active {
+            background: #ffffff !important;
+            transform: translateY(-1px);
+        }
+        #page-monopoly .mono-player-hero {
+            background: rgba(255,255,255,0.20) !important;
+            border-color: rgba(255,255,255,0.38) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.24) !important;
+        }
+        #page-monopoly .mono-message {
+            background: rgba(15,23,42,0.84) !important;
+            border: 1px solid rgba(255,255,255,0.28) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 16px 32px rgba(15,23,42,0.18), inset 0 1px 0 rgba(255,255,255,0.12) !important;
+        }
+        #page-monopoly .mono-board-btn {
+            border: 0 !important;
+            background: rgba(255,255,255,0.92) !important;
+            color: #064e3b !important;
+            box-shadow: 0 10px 22px rgba(6,78,59,0.16) !important;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease !important;
+        }
+        #page-monopoly .mono-board-btn.primary,
+        #page-monopoly .mono-board-btn.accept {
+            background: linear-gradient(180deg, #facc15, #f59e0b) !important;
+            color: #1f2937 !important;
+        }
+        #page-monopoly .mono-board-btn.reject {
+            background: rgba(15,23,42,0.72) !important;
+            color: #ffffff !important;
+        }
+        #page-monopoly .mono-board-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 28px rgba(6,78,59,0.22) !important;
+        }
+        #page-monopoly .mono-cell {
+            border-radius: 9px !important;
+            border: 1px solid rgba(255,255,255,0.64) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 5px 12px rgba(6,78,59,0.10) !important;
+            transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease !important;
+        }
+        #page-monopoly .mono-cell:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+        #page-monopoly .mono-cell.mono-active {
+            box-shadow: 0 0 0 2px #facc15, 0 0 22px rgba(250,204,21,0.55), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+            animation: monoActivePulse 1.5s ease-in-out infinite;
+        }
+        #page-monopoly .mono-owner {
+            border-radius: 999px !important;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.72), 0 6px 12px rgba(15,23,42,0.22) !important;
+        }
+        #page-monopoly .mono-token {
+            transition: transform 0.24s cubic-bezier(.2,.8,.2,1), filter 0.2s ease !important;
+        }
+        #page-monopoly .mono-token:hover {
+            transform: translateY(-3px) scale(1.12) !important;
+            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.28));
+        }
+        #page-monopoly .mono-dice-visual span {
+            background: linear-gradient(180deg, #ffffff, #e0f2fe) !important;
+            color: #064e3b !important;
+            border: 1px solid rgba(255,255,255,0.72) !important;
+            box-shadow: 0 12px 24px rgba(15,23,42,0.20), inset 0 2px 0 rgba(255,255,255,0.8) !important;
+        }
+        #page-monopoly .mono-fx-layer {
+            grid-area: 2 / 2 / 11 / 11;
+            align-self: stretch;
+            justify-self: stretch;
+            display: grid;
+            place-items: center;
+            pointer-events: none;
+            position: relative;
+            z-index: 35;
+        }
+        #page-monopoly .mono-fx-card {
+            min-width: min(460px, 76%);
+            max-width: min(560px, 86%);
+            padding: clamp(16px, 2.6vw, 28px);
+            border-radius: 22px;
+            background: rgba(255,255,255,0.92);
+            color: #0f172a;
+            border: 1px solid rgba(255,255,255,0.85);
+            box-shadow: 0 26px 60px rgba(15,23,42,0.30);
+            text-align: center;
+            animation: monoFxPop 1.2s ease both;
+        }
+        #page-monopoly .mono-fx-title {
+            font-size: clamp(1.15rem, 2.2vw, 2rem);
+            line-height: 1.05;
+            font-weight: 950;
+            color: #064e3b;
+        }
+        #page-monopoly .mono-fx-detail {
+            margin-top: 8px;
+            color: #475569;
+            font-weight: 850;
+            line-height: 1.35;
+        }
+        #page-monopoly .mono-fx-route {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        #page-monopoly .mono-fx-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 84px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #065f46;
+            font-weight: 950;
+        }
+        #page-monopoly .mono-fx-money {
+            color: #b45309;
+            background: #fffbeb;
+            animation: monoMoneyFly 1.15s ease both;
+        }
+        #page-monopoly .mono-fx-jail {
+            background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(51,65,85,0.94));
+            color: #ffffff;
+            animation: monoJailDrop 1.2s ease both;
+        }
+        #page-monopoly .mono-fx-jail .mono-fx-title,
+        #page-monopoly .mono-fx-jail .mono-fx-detail {
+            color: #ffffff;
+        }
+        #page-monopoly .mono-fx-bars {
+            height: 64px;
+            margin: 14px auto 0;
+            max-width: 220px;
+            border-radius: 16px;
+            background:
+                repeating-linear-gradient(90deg, rgba(248,250,252,0.96) 0 14px, transparent 14px 29px),
+                linear-gradient(180deg, rgba(15,23,42,0.20), rgba(15,23,42,0.44));
+            animation: monoBarsShake 0.52s ease 0.1s both;
+        }
+        #page-monopoly .mono-fx-coin {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 28%, #fff7ad, #facc15 54%, #b45309);
+            box-shadow: 0 6px 10px rgba(180,83,9,0.28);
+            animation: monoCoinBurst 1.15s ease-out both;
+        }
+        #page-monopoly .mono-fx-coin:nth-child(1) { left: 38%; top: 38%; animation-delay: 0.04s; }
+        #page-monopoly .mono-fx-coin:nth-child(2) { left: 56%; top: 34%; animation-delay: 0.12s; }
+        #page-monopoly .mono-fx-coin:nth-child(3) { left: 44%; top: 60%; animation-delay: 0.18s; }
+        @keyframes monoActivePulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.16); }
+        }
+        @keyframes monoFxPop {
+            0% { opacity: 0; transform: translateY(18px) scale(0.92); }
+            18% { opacity: 1; transform: translateY(0) scale(1.02); }
+            82% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-18px) scale(0.96); }
+        }
+        @keyframes monoMoneyFly {
+            0% { transform: translateX(-34px) scale(0.8); opacity: 0; }
+            22% { opacity: 1; }
+            72% { transform: translateX(28px) scale(1.08); opacity: 1; }
+            100% { transform: translateX(54px) scale(0.92); opacity: 0; }
+        }
+        @keyframes monoJailDrop {
+            0% { opacity: 0; transform: translateY(-44px) scale(1.04); }
+            22% { opacity: 1; transform: translateY(0) scale(1); }
+            80% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(24px) scale(0.96); }
+        }
+        @keyframes monoBarsShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            55% { transform: translateX(4px); }
+            75% { transform: translateX(-2px); }
+        }
+        @keyframes monoCoinBurst {
+            0% { opacity: 0; transform: translate(0, 0) scale(0.45); }
+            18% { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--coin-x, 36px), var(--coin-y, -54px)) scale(1.1); }
+        }
         .menu-card.fg-tile .fg-icon-frame {
             width: min(136px, 64%) !important;
             height: min(136px, 64%) !important;
@@ -9946,15 +10379,31 @@
             transform: scale(var(--icon-zoom, 1.1)) !important;
         }
         @media (max-width: 820px) {
+            #authModal {
+                height: min(920px, calc(100dvh - 18px)) !important;
+            }
             #authModal .auth-shell {
                 grid-template-columns: 1fr !important;
                 min-height: 0 !important;
             }
             #authModal .auth-visual {
-                min-height: 240px !important;
+                min-height: 210px !important;
+                max-height: 34dvh !important;
             }
             #authModal .auth-panel {
-                padding: 26px !important;
+                padding: 24px !important;
+                gap: 16px !important;
+            }
+            #authModal .auth-form {
+                margin: 0 !important;
+            }
+            #authModal .auth-form h2 {
+                font-size: clamp(1.85rem, 8vw, 2.55rem) !important;
+            }
+            .admin-shell,
+            .admin-stat-grid,
+            .admin-game-grid {
+                grid-template-columns: 1fr;
             }
         }
         @media (max-width: 720px) {
@@ -10053,6 +10502,10 @@
                     <input type="text" id="register-username" placeholder="A-Z, 0-9, dấu ., _, -" autocomplete="username" onkeydown="if(event.key==='Enter') processRegister()">
                 </div>
                 <div class="auth-field">
+                    <label for="register-display-name">Tên hiển thị</label>
+                    <input type="text" id="register-display-name" placeholder="Tên hiện trong game và bạn bè" maxlength="32" autocomplete="name" onkeydown="if(event.key==='Enter') processRegister()">
+                </div>
+                <div class="auth-field">
                     <label for="register-password">Mật khẩu</label>
                     <input type="password" id="register-password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" onkeydown="if(event.key==='Enter') processRegister()">
                 </div>
@@ -10068,6 +10521,7 @@
                 <button type="button" class="auth-secondary" onclick="switchAuthMode('login')">Tôi đã có tài khoản</button>
                 <div class="auth-help">Tên đăng nhập dùng 3-20 ký tự, không dùng khoảng trắng hoặc dấu tiếng Việt.</div>
             </div>
+
         </section>
     </div>
 </div>
@@ -10109,6 +10563,7 @@
                 <button onclick="setSocialStatus('gaming')"><span class="status-dot gaming"></span>Gaming</button>
                 <button onclick="setSocialStatus('invisible')"><span class="status-dot invisible"></span>Ẩn</button>
                 <button onclick="openAvatarPicker()">Đổi ảnh đại diện</button>
+                <button onclick="openDisplayNameEditor()">Đổi tên hiển thị</button>
             </div>
         </div>
     </div>
@@ -10157,6 +10612,7 @@
                 <div id="auth-section" style="display:flex; gap:10px; align-items:center;">
                      <span id="user-greeting" style="font-weight:bold; color: #8e44ad; background: rgba(255,255,255,0.6); padding: 5px 15px; border-radius: 20px; display:none;"></span>
                      <button class="btn-outline" data-i18n="login" onclick="showAuthModal()" id="btn-login" style="padding:6px 15px; border-radius:20px; font-size:0.85rem; cursor:pointer; font-weight:bold; border-width:2px; height:max-content; margin:0; --btn-color:#2980b9;">Đăng nhập</button>
+                     <button class="btn-outline" onclick="openAdminPanel()" id="btn-admin-panel" style="display:none; padding:6px 15px; border-radius:20px; font-size:0.85rem; cursor:pointer; font-weight:bold; border-width:2px; height:max-content; margin:0; --btn-color:#0f766e;">Quản trị</button>
                      <button class="btn-outline" data-i18n="logout" onclick="logout()" id="btn-logout" style="display:none; padding:6px 15px; border-radius:20px; font-size:0.85rem; cursor:pointer; font-weight:bold; border-width:2px; height:max-content; margin:0; --btn-color:#e74c3c;">Đăng xuất</button>
                 </div>
                 <div class="quick-controls" style="display:flex; gap:10px;">
@@ -11079,6 +11535,37 @@
         </div>
         <div id="history-list" style="text-align:left; max-height:60vh; overflow-y:auto; border-top:2px solid rgba(255,255,255,0.5); padding-top:20px; background: rgba(255,255,255,0.4); border-radius: 20px; padding: 20px;"></div>
     </div>
+    <div id="page-admin" class="hidden admin-page">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <button class="btn-back" onclick="openMode('menu')">❮</button>
+                <h2 style="color:#0f766e; margin:0; font-size:2rem; font-weight:950;">Quản trị FAST GAMES</h2>
+            </div>
+            <button class="admin-btn secondary" onclick="renderAdminPanel()">Làm mới</button>
+        </div>
+        <div class="admin-shell">
+            <section class="admin-card">
+                <h3>Tổng quan</h3>
+                <div id="admin-stats" class="admin-stat-grid"></div>
+                <h3>Quản lý game</h3>
+                <div id="admin-game-toggles" class="admin-game-grid"></div>
+                <div class="admin-actions">
+                    <button class="admin-btn" onclick="saveAdminGameSettings()">Lưu cấu hình game</button>
+                    <button class="admin-btn secondary" onclick="resetAdminGameSettings()">Mở lại tất cả</button>
+                </div>
+                <div id="admin-game-status" class="admin-status"></div>
+            </section>
+            <section class="admin-card">
+                <h3>Người chơi</h3>
+                <div class="admin-actions" style="margin-top:0; margin-bottom:12px;">
+                    <button class="admin-btn" onclick="loadAdminPlayers()">Tải danh sách</button>
+                    <button class="admin-btn secondary" onclick="exportAdminPlayers()">Xuất CSV</button>
+                </div>
+                <div id="admin-player-status" class="admin-status"></div>
+                <div id="admin-players" class="admin-table-wrap"></div>
+            </section>
+        </div>
+    </div>
 </div>
 
 <div id="patriot-text" data-i18n="patriot_text">Hoàng Sa, Trường Sa là của Việt Nam</div>
@@ -11138,6 +11625,23 @@
     const AUTH_USER_STORAGE_KEY = 'ecoHub_currentUser';
     const AUTH_REMEMBER_KEY = 'fastGames_rememberLogin';
     const AUTH_TRANSIENT_KEY = 'fastGames_transientLogin';
+    const DEFAULT_ADMIN_LOGIN = 'admin@fastgames.site';
+    const DEFAULT_ADMIN_DISPLAY_NAME = 'HeiuNG - Admin';
+    const ADMIN_SETTINGS_STORAGE_KEY = 'fastGames_adminSettings';
+    const ADMIN_GAME_CATALOG = [
+        { key: 'chess', name: 'Cờ vua' },
+        { key: 'cchess', name: 'Cờ tướng' },
+        { key: 'horse', name: 'Cờ cá ngựa' },
+        { key: 'werewolf', name: 'Ma sói' },
+        { key: 'monopoly', name: 'Cờ tỷ phú' },
+        { key: 'uno', name: 'UNO' },
+        { key: 'line98', name: 'Line Ball' },
+        { key: 'oanquan', name: 'Ô ăn quan' },
+        { key: 'block', name: 'Xếp hình' },
+        { key: 'sudoku', name: 'Sudoku' },
+        { key: 'ttt', name: 'Tic Tac Toe' },
+        { key: 'snake', name: 'Rắn săn mồi' }
+    ];
     const supabaseClient = window.supabase
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
         : null;
@@ -11193,6 +11697,7 @@
     let currentUser = getStoredAuthUsername();
     let currentAuthUser = null;
     let currentProfile = null;
+    let adminSettings = loadAdminSettings();
     
     function switchAuthMode(mode = 'login') {
         const isRegister = mode === 'register';
@@ -11221,7 +11726,18 @@
     }
 
     function getAuthEmailFromUsername(usernameKey) {
+        if (String(usernameKey || '').includes('@')) return String(usernameKey || '').toLowerCase();
         return `${usernameKey}@${AUTH_EMAIL_DOMAIN}`;
+    }
+
+    function isValidLoginIdentifier(value) {
+        const login = String(value || '').trim();
+        if (login.includes('@')) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login);
+        return isValidAuthUsername(login);
+    }
+
+    function sanitizeDisplayName(value, fallback = '') {
+        return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 32) || fallback;
     }
 
     function showSupabaseSetupError(error) {
@@ -11229,7 +11745,7 @@
         alert('Supabase đã kết nối, nhưng bảng profiles/policy có thể chưa được tạo. Hãy chạy SQL ở bước tạo bảng trong Supabase rồi thử lại.');
     }
 
-    async function ensureSupabaseProfile(authUser, preferredUsername = '') {
+    async function ensureSupabaseProfile(authUser, preferredUsername = '', preferredDisplayName = '') {
         if (!supabaseClient || !authUser) return null;
 
         const { data: existing, error: selectError } = await supabaseClient
@@ -11244,6 +11760,10 @@
         const fallbackName = preferredUsername || authUser.user_metadata?.username || authUser.email?.split('@')[0] || 'player';
         const username = fallbackName.trim();
         const usernameKey = normalizeUsername(username);
+        const displayName = sanitizeDisplayName(
+            preferredDisplayName || authUser.user_metadata?.display_name || (authUser.email?.toLowerCase() === DEFAULT_ADMIN_LOGIN ? DEFAULT_ADMIN_DISPLAY_NAME : ''),
+            username
+        );
 
         const { data: created, error: insertError } = await supabaseClient
             .from('profiles')
@@ -11251,7 +11771,7 @@
                 id: authUser.id,
                 username,
                 username_key: usernameKey,
-                display_name: username,
+                display_name: displayName,
                 status: 'online',
                 last_seen: new Date().toISOString()
             })
@@ -11260,6 +11780,106 @@
 
         if (insertError) throw insertError;
         return created;
+    }
+
+    async function loadCurrentProfileAdminMeta() {
+        if (!supabaseClient || !currentAuthUser || !currentProfile?.id) return currentProfile;
+        try {
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('id, role, is_banned')
+                .eq('id', currentAuthUser.id)
+                .maybeSingle();
+            if (!error && data) currentProfile = { ...currentProfile, ...data };
+        } catch (err) {
+            console.warn('Không tải được metadata admin/profile:', err);
+        }
+        return currentProfile;
+    }
+
+    function isCurrentUserAdmin() {
+        const authEmail = currentAuthUser?.email?.toLowerCase() || '';
+        const profileLogin = (currentProfile?.username_key || currentProfile?.username || currentUser || '').toLowerCase();
+        return currentProfile?.role === 'admin' ||
+            currentProfile?.is_admin === true ||
+            authEmail === DEFAULT_ADMIN_LOGIN ||
+            profileLogin === DEFAULT_ADMIN_LOGIN;
+    }
+
+    function loadAdminSettings() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(ADMIN_SETTINGS_STORAGE_KEY) || '{}');
+            return {
+                disabledGames: Array.isArray(parsed.disabledGames) ? parsed.disabledGames : [],
+                updatedAt: parsed.updatedAt || ''
+            };
+        } catch (_) {
+            return { disabledGames: [], updatedAt: '' };
+        }
+    }
+
+    function saveAdminSettings() {
+        adminSettings.updatedAt = new Date().toISOString();
+        localStorage.setItem(ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(adminSettings));
+        rebuildGameMenu();
+    }
+
+    async function loadRemoteAdminSettings() {
+        if (!supabaseClient) return;
+        try {
+            const { data, error } = await supabaseClient
+                .from('site_settings')
+                .select('value')
+                .eq('key', 'game_controls')
+                .maybeSingle();
+            if (!error && data?.value) {
+                adminSettings = {
+                    disabledGames: Array.isArray(data.value.disabledGames) ? data.value.disabledGames : [],
+                    updatedAt: data.value.updatedAt || ''
+                };
+                localStorage.setItem(ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(adminSettings));
+                rebuildGameMenu();
+            }
+        } catch (err) {
+            console.warn('Không tải được cấu hình admin từ Supabase:', err);
+        }
+    }
+
+    async function saveRemoteAdminSettings() {
+        if (!supabaseClient || !isCurrentUserAdmin()) return false;
+        const { error } = await supabaseClient
+            .from('site_settings')
+            .upsert({
+                key: 'game_controls',
+                value: adminSettings,
+                updated_by: currentAuthUser?.id || null,
+                updated_at: new Date().toISOString()
+            });
+        if (error) throw error;
+        return true;
+    }
+
+    function normalizeAdminGameKey(gameKey) {
+        const aliases = {
+            xiangqi: 'cchess',
+            puzzle: 'block',
+            block: 'block',
+            lineball: 'line98',
+            line98: 'line98',
+            ttt: 'ttt'
+        };
+        return aliases[gameKey] || gameKey;
+    }
+
+    function isGameDisabled(gameKey) {
+        const key = normalizeAdminGameKey(gameKey);
+        return adminSettings.disabledGames.includes(key);
+    }
+
+    function blockDisabledGame(gameKey) {
+        if (!isGameDisabled(gameKey)) return false;
+        alert('Game này đang được admin đưa vào trạng thái bảo trì.');
+        return true;
     }
 
     async function loadSupabaseSession() {
@@ -11294,6 +11914,16 @@
         try {
             currentAuthUser = data.user;
             currentProfile = await ensureSupabaseProfile(data.user);
+            await loadCurrentProfileAdminMeta();
+            if (currentProfile?.is_banned) {
+                currentAuthUser = null;
+                currentProfile = null;
+                currentUser = null;
+                clearAuthStorage();
+                await supabaseClient.auth.signOut().catch(() => {});
+                updateAuthUI();
+                return alert('Tài khoản này đang bị admin khóa.');
+            }
             currentUser = currentProfile?.username || data.user.email?.split('@')[0] || null;
             if (currentUser) storeAuthUsername(currentUser, hasRememberLoginPreference());
             updateAuthUI();
@@ -11317,8 +11947,8 @@
         let u = usernameInput.value.trim();
         let p = passwordInput.value;
         if(!u || !p) return alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!');
-        if(!isValidAuthUsername(u)) {
-            return alert('Tên đăng nhập chỉ được dùng A-Z, a-z, 0-9, dấu gạch dưới, gạch ngang hoặc dấu chấm; không dùng khoảng trắng hay dấu tiếng Việt.');
+        if(!isValidLoginIdentifier(u)) {
+            return alert('Tên đăng nhập không hợp lệ. Tài khoản thường dùng A-Z, 0-9, dấu ., _, -; admin có thể dùng email.');
         }
 
         if (!supabaseClient) {
@@ -11351,6 +11981,16 @@
 
             currentAuthUser = data.user;
             currentProfile = await ensureSupabaseProfile(data.user, u);
+            await loadCurrentProfileAdminMeta();
+            if (currentProfile?.is_banned) {
+                currentAuthUser = null;
+                currentProfile = null;
+                currentUser = null;
+                clearAuthStorage();
+                await supabaseClient.auth.signOut().catch(() => {});
+                updateAuthUI();
+                return alert('Tài khoản này đang bị admin khóa.');
+            }
             currentUser = currentProfile.username;
             storeAuthUsername(currentUser, getAuthRememberChoice());
 
@@ -11358,7 +11998,11 @@
             updateAuthUI();
             usernameInput.value = '';
             passwordInput.value = '';
-            alert('Đăng nhập thành công!');
+            if (isCurrentUserAdmin()) {
+                openAdminPanel();
+            } else {
+                alert('Đăng nhập thành công!');
+            }
         } catch (error) {
             const code = error?.code || '';
             const message = String(error?.message || '');
@@ -11384,9 +12028,11 @@
 
     async function processRegister() {
         const usernameInput = document.getElementById('register-username');
+        const displayNameInput = document.getElementById('register-display-name');
         const passwordInput = document.getElementById('register-password');
         const confirmInput = document.getElementById('register-password-confirm');
         const u = usernameInput?.value.trim() || '';
+        const displayName = sanitizeDisplayName(displayNameInput?.value, u);
         const p = passwordInput?.value || '';
         const confirm = confirmInput?.value || '';
         if (!u || !p || !confirm) return alert('Vui lòng nhập đầy đủ thông tin đăng ký.');
@@ -11416,7 +12062,8 @@
                 options: {
                     data: {
                         username: u,
-                        username_key: usernameKey
+                        username_key: usernameKey,
+                        display_name: displayName
                     }
                 }
             });
@@ -11427,13 +12074,15 @@
             }
 
             currentAuthUser = data.user;
-            currentProfile = await ensureSupabaseProfile(data.user, u);
+            currentProfile = await ensureSupabaseProfile(data.user, u, displayName);
+            await loadCurrentProfileAdminMeta();
             currentUser = currentProfile.username;
             storeAuthUsername(currentUser, getAuthRememberChoice());
 
             closeAuthModal();
             updateAuthUI();
             usernameInput.value = '';
+            displayNameInput.value = '';
             passwordInput.value = '';
             confirmInput.value = '';
             alert('Đăng ký thành công!');
@@ -11481,18 +12130,191 @@
     }
     
     function updateAuthUI() {
+        const isAdmin = isCurrentUserAdmin();
         if(currentUser) {
             document.getElementById('btn-login').style.display = 'none';
             document.getElementById('btn-logout').style.display = 'inline-block';
             document.getElementById('user-greeting').style.display = 'inline-block';
-            document.getElementById('user-greeting').innerText = `Hello, ${currentUser}`;
+            document.getElementById('user-greeting').innerText = `${isAdmin ? 'Admin' : 'Hello'}, ${currentProfile?.display_name || currentUser}`;
         } else {
             document.getElementById('btn-login').style.display = 'inline-block';
             document.getElementById('btn-logout').style.display = 'none';
             document.getElementById('user-greeting').style.display = 'none';
         }
+        const adminPanelBtn = document.getElementById('btn-admin-panel');
+        if (adminPanelBtn) adminPanelBtn.style.display = isAdmin ? 'inline-block' : 'none';
         updateSocialAuthUI();
         refreshCurrentGameProfileViews();
+    }
+
+    function openAdminPanel() {
+        if (!isCurrentUserAdmin()) {
+            alert('Chỉ tài khoản admin mới mở được trang quản trị.');
+            showAuthModal('login');
+            return;
+        }
+        openMode('admin');
+        renderAdminPanel();
+    }
+
+    function renderAdminPanel() {
+        if (!isCurrentUserAdmin()) return;
+        const stats = document.getElementById('admin-stats');
+        const toggles = document.getElementById('admin-game-toggles');
+        if (stats) {
+            stats.innerHTML = `
+                <div class="admin-stat"><strong>${ADMIN_GAME_CATALOG.length}</strong><span>Game</span></div>
+                <div class="admin-stat"><strong>${adminSettings.disabledGames.length}</strong><span>Đang bảo trì</span></div>
+                <div class="admin-stat"><strong>${currentProfile?.role || 'admin'}</strong><span>Quyền hiện tại</span></div>
+            `;
+        }
+        if (toggles) {
+            toggles.innerHTML = ADMIN_GAME_CATALOG.map(game => `
+                <label class="admin-game-toggle">
+                    <span>${escapeSocialText(game.name)}</span>
+                    <input type="checkbox" data-admin-game="${game.key}" ${isGameDisabled(game.key) ? '' : 'checked'}>
+                </label>
+            `).join('');
+        }
+        const status = document.getElementById('admin-game-status');
+        if (status) status.textContent = adminSettings.updatedAt ? `Cập nhật gần nhất: ${new Date(adminSettings.updatedAt).toLocaleString('vi-VN')}` : 'Cấu hình đang lưu trên trình duyệt này. Muốn áp dụng toàn hệ thống cần lưu vào Supabase bằng policy admin.';
+    }
+
+    async function saveAdminGameSettings() {
+        if (!isCurrentUserAdmin()) return alert('Bạn chưa có quyền admin.');
+        const disabled = [];
+        document.querySelectorAll('[data-admin-game]').forEach(input => {
+            if (!input.checked) disabled.push(input.getAttribute('data-admin-game'));
+        });
+        adminSettings.disabledGames = disabled;
+        saveAdminSettings();
+        try {
+            await saveRemoteAdminSettings();
+            const status = document.getElementById('admin-game-status');
+            if (status) status.textContent = 'Đã lưu cấu hình game lên Supabase.';
+        } catch (err) {
+            console.error(err);
+            const status = document.getElementById('admin-game-status');
+            if (status) status.textContent = 'Đã lưu trên trình duyệt, nhưng chưa lưu được lên Supabase. Kiểm tra bảng site_settings/policy admin.';
+        }
+        renderAdminPanel();
+    }
+
+    async function resetAdminGameSettings() {
+        if (!isCurrentUserAdmin()) return alert('Bạn chưa có quyền admin.');
+        adminSettings.disabledGames = [];
+        saveAdminSettings();
+        try {
+            await saveRemoteAdminSettings();
+        } catch (err) {
+            console.warn('Không lưu được reset lên Supabase:', err);
+        }
+        renderAdminPanel();
+    }
+
+    let adminPlayersCache = [];
+
+    async function loadAdminPlayers() {
+        const status = document.getElementById('admin-player-status');
+        const box = document.getElementById('admin-players');
+        if (!isCurrentUserAdmin()) return alert('Bạn chưa có quyền admin.');
+        if (!supabaseClient) {
+            if (status) status.textContent = 'Không tải được Supabase SDK.';
+            return;
+        }
+        if (status) status.textContent = 'Đang tải danh sách người chơi...';
+        try {
+            let { data, error } = await supabaseClient
+                .from('profiles')
+                .select('id, username, display_name, status, last_seen, role, is_banned, created_at')
+                .order('last_seen', { ascending: false, nullsFirst: false })
+                .limit(300);
+            if (error && String(error.message || '').includes('schema cache')) {
+                const fallback = await supabaseClient
+                    .from('profiles')
+                    .select('id, username, display_name, status, last_seen, created_at')
+                    .order('last_seen', { ascending: false, nullsFirst: false })
+                    .limit(300);
+                data = fallback.data;
+                error = fallback.error;
+            }
+            if (error) throw error;
+            adminPlayersCache = data || [];
+            if (status) status.textContent = `Đã tải ${adminPlayersCache.length} người chơi.`;
+            renderAdminPlayers();
+        } catch (err) {
+            console.error(err);
+            if (status) status.textContent = 'Không tải được người chơi. Hãy kiểm tra SQL role/policy admin trong Supabase.';
+            if (box) box.innerHTML = '';
+        }
+    }
+
+    function renderAdminPlayers() {
+        const box = document.getElementById('admin-players');
+        if (!box) return;
+        if (!adminPlayersCache.length) {
+            box.innerHTML = '<div style="padding:14px; color:#64748b; font-weight:850;">Chưa có dữ liệu người chơi.</div>';
+            return;
+        }
+        box.innerHTML = `<table class="admin-table">
+            <thead><tr><th>Username</th><th>Hiển thị</th><th>Trạng thái</th><th>Role</th><th>Lần cuối</th><th>Thao tác</th></tr></thead>
+            <tbody>
+                ${adminPlayersCache.map(p => {
+                    const role = p.role || 'player';
+                    const banned = !!p.is_banned;
+                    return `<tr>
+                        <td>${escapeSocialText(p.username || '')}</td>
+                        <td>${escapeSocialText(p.display_name || '')}</td>
+                        <td><span class="admin-role-badge${banned ? ' banned' : ''}">${banned ? 'Bị khóa' : escapeSocialText(p.status || 'offline')}</span></td>
+                        <td>${escapeSocialText(role)}</td>
+                        <td>${p.last_seen ? new Date(p.last_seen).toLocaleString('vi-VN') : ''}</td>
+                        <td>
+                            <button class="admin-btn secondary" onclick="adminSetPlayerRole('${p.id}', '${role === 'admin' ? 'player' : 'admin'}')">${role === 'admin' ? 'Gỡ admin' : 'Set admin'}</button>
+                            <button class="admin-btn ${banned ? 'secondary' : 'danger'}" onclick="adminSetPlayerBanned('${p.id}', ${banned ? 'false' : 'true'})">${banned ? 'Mở khóa' : 'Khóa'}</button>
+                        </td>
+                    </tr>`;
+                }).join('')}
+            </tbody>
+        </table>`;
+    }
+
+    async function adminUpdatePlayer(userId, patch) {
+        if (!isCurrentUserAdmin()) return alert('Bạn chưa có quyền admin.');
+        try {
+            const { error } = await supabaseClient
+                .from('profiles')
+                .update(patch)
+                .eq('id', userId);
+            if (error) throw error;
+            await loadAdminPlayers();
+        } catch (err) {
+            console.error(err);
+            alert('Không cập nhật được người chơi. Hãy kiểm tra policy admin trong Supabase.');
+        }
+    }
+
+    function adminSetPlayerRole(userId, role) {
+        adminUpdatePlayer(userId, { role });
+    }
+
+    function adminSetPlayerBanned(userId, isBanned) {
+        adminUpdatePlayer(userId, { is_banned: !!isBanned });
+    }
+
+    function exportAdminPlayers() {
+        if (!adminPlayersCache.length) return alert('Chưa có dữ liệu để xuất.');
+        const headers = ['username', 'display_name', 'status', 'role', 'is_banned', 'last_seen'];
+        const csv = [
+            headers.join(','),
+            ...adminPlayersCache.map(p => headers.map(key => `"${String(p[key] ?? '').replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `fast-games-players-${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
     }
 
     const SOCIAL_STATUS_LABELS = {
@@ -11983,6 +12805,36 @@
         document.getElementById('social-avatar-file')?.click();
     }
 
+    async function openDisplayNameEditor() {
+        if (!currentAuthUser || !supabaseClient) {
+            showAuthModal();
+            return;
+        }
+        document.getElementById('social-status-menu')?.classList.add('hidden');
+        const currentName = currentProfile?.display_name || currentProfile?.username || currentUser || '';
+        const nextName = sanitizeDisplayName(prompt('Nhập tên hiển thị mới:', currentName), currentName);
+        if (!nextName || nextName === currentName) return;
+        if (nextName.length < 2) {
+            setAvatarStatus('Tên hiển thị cần ít nhất 2 ký tự.', 'error');
+            return;
+        }
+        setAvatarStatus('Đang cập nhật tên hiển thị...', '');
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update({ display_name: nextName, last_seen: new Date().toISOString() })
+            .eq('id', currentAuthUser.id);
+        if (error) {
+            handleSocialError(error, 'display name');
+            setAvatarStatus('Không đổi được tên hiển thị. Hãy kiểm tra policy profiles.', 'error');
+            return;
+        }
+        currentProfile = { ...(currentProfile || {}), display_name: nextName };
+        updateAuthUI();
+        renderSocialProfile();
+        refreshCurrentGameProfileViews();
+        setAvatarStatus('Đã đổi tên hiển thị.', 'ok');
+    }
+
     async function uploadSocialAvatar(event) {
         const file = event.target.files?.[0];
         event.target.value = '';
@@ -12046,6 +12898,7 @@
 
     window.onload = async () => {
         await loadSupabaseSession();
+        await loadRemoteAdminSettings();
     };
 
     // ==========================================
@@ -12124,6 +12977,7 @@
 
     function prepareGameStart(gameKey, startCallback, skipIntro = false) {
         if (!requireLoginToPlay()) return false;
+        if (blockDisabledGame(gameKey)) return false;
         if (skipIntro) return true;
         showGameIntro(gameKey, startCallback);
         return false;
@@ -12191,24 +13045,26 @@
         const grid = document.querySelector('.menu-grid');
         if (!grid) return;
         const items = [
-            { key: 'chess', img: 'covua.png', target: "openBoardMenu('chess')", a: '#2563eb', b: '#14b8a6', clean: true, zoom: 1.1 },
-            { key: 'xiangqi', img: 'cotuong.png', target: "openBoardMenu('cchess')", a: '#dc2626', b: '#f59e0b', clean: true, zoom: 1.08 },
-            { key: 'horse', img: 'cangua.png', target: "openMode('horse-menu')", a: '#ef476f', b: '#3a86ff', clean: true, zoom: 1.08 },
-            { key: 'werewolf', img: 'masoi.png', target: "showWerewolfComingSoon()", a: '#be123c', b: '#111827', clean: true, zoom: 1.08 },
-            { key: 'monopoly', img: 'typhu.png', target: "openMode('monopoly-menu')", a: '#0f766e', b: '#facc15', clean: true, zoom: 1.08 },
-            { key: 'uno', img: 'uno.png', target: "openMode('uno-menu')", a: '#dc2626', b: '#2563eb', clean: true, zoom: 1.1 },
-            { key: 'line98', img: 'line ball.png', target: "initLineBall()", a: '#22c55e', b: '#a855f7', clean: true, zoom: 1.08 },
-            { key: 'oanquan', img: 'oanquan.png', target: "openMode('oanquan-menu')", a: '#c06f26', b: '#fbbf24', clean: true, zoom: 1.1 },
-            { key: 'puzzle', img: 'xephinh.png', target: "openMode('block-menu')", a: '#14b8a6', b: '#60a5fa', clean: true, zoom: 1.1 },
-            { key: 'sudoku', img: 'sudoku.png', target: "openMode('sudoku-menu')", a: '#6366f1', b: '#f472b6', clean: true, zoom: 1.08 },
-            { key: 'ttt', img: 'tictactoe.png', target: "openMode('ttt-menu')", a: '#eab308', b: '#22c55e', clean: true, zoom: 1.08 },
-            { key: 'snake', img: 'ransanmoi.png', target: "openMode('snake-menu')", a: '#16a34a', b: '#06b6d4', clean: true, zoom: 1.08 }
+            { key: 'chess', game: 'chess', img: 'covua.png', target: "openBoardMenu('chess')", a: '#2563eb', b: '#14b8a6', clean: true, zoom: 1.1 },
+            { key: 'xiangqi', game: 'cchess', img: 'cotuong.png', target: "openBoardMenu('cchess')", a: '#dc2626', b: '#f59e0b', clean: true, zoom: 1.08 },
+            { key: 'horse', game: 'horse', img: 'cangua.png', target: "openMode('horse-menu')", a: '#ef476f', b: '#3a86ff', clean: true, zoom: 1.08 },
+            { key: 'werewolf', game: 'werewolf', img: 'masoi.png', target: "showWerewolfComingSoon()", a: '#be123c', b: '#111827', clean: true, zoom: 1.08 },
+            { key: 'monopoly', game: 'monopoly', img: 'typhu.png', target: "openMode('monopoly-menu')", a: '#0f766e', b: '#facc15', clean: true, zoom: 1.08 },
+            { key: 'uno', game: 'uno', img: 'uno.png', target: "openMode('uno-menu')", a: '#dc2626', b: '#2563eb', clean: true, zoom: 1.1 },
+            { key: 'line98', game: 'line98', img: 'line ball.png', target: "initLineBall()", a: '#22c55e', b: '#a855f7', clean: true, zoom: 1.08 },
+            { key: 'oanquan', game: 'oanquan', img: 'oanquan.png', target: "openMode('oanquan-menu')", a: '#c06f26', b: '#fbbf24', clean: true, zoom: 1.1 },
+            { key: 'puzzle', game: 'block', img: 'xephinh.png', target: "openMode('block-menu')", a: '#14b8a6', b: '#60a5fa', clean: true, zoom: 1.1 },
+            { key: 'sudoku', game: 'sudoku', img: 'sudoku.png', target: "openMode('sudoku-menu')", a: '#6366f1', b: '#f472b6', clean: true, zoom: 1.08 },
+            { key: 'ttt', game: 'ttt', img: 'tictactoe.png', target: "openMode('ttt-menu')", a: '#eab308', b: '#22c55e', clean: true, zoom: 1.08 },
+            { key: 'snake', game: 'snake', img: 'ransanmoi.png', target: "openMode('snake-menu')", a: '#16a34a', b: '#06b6d4', clean: true, zoom: 1.08 }
         ];
         grid.classList.add('fg-menu-v4');
         grid.innerHTML = items.map(item => {
             const iconVars = item.clean ? ` --icon-zoom:${item.zoom || 1.1}; --icon-x:${item.x || '50%'}; --icon-y:${item.y || '50%'};` : '';
+            const disabled = isGameDisabled(item.game || item.key);
+            const clickAction = disabled ? `blockDisabledGame('${item.game || item.key}')` : item.target;
             return `
-            <div class="menu-card game-card-item fg-tile" onclick="${item.target}" style="--tile-a:${item.a}; --tile-b:${item.b}; border-color:${item.a};">
+            <div class="menu-card game-card-item fg-tile${disabled ? ' admin-game-disabled' : ''}" onclick="${clickAction}" style="--tile-a:${item.a}; --tile-b:${item.b}; border-color:${item.a};">
                 <span class="fg-icon-frame${item.clean ? ' fg-icon-clean' : ''}">
                     <img class="menu-img fg-menu-image" src="${item.img}" alt="" loading="lazy" aria-hidden="true" style="${iconVars}">
                 </span>
@@ -12685,6 +13541,7 @@
         
         if(mode === 'menu' || mode === 'board-menu' || mode === 'block-menu' || mode === 'sudoku-menu' || mode === 'oanquan-menu' || mode === 'horse-menu' || mode === 'werewolf-menu' || mode === 'monopoly-menu' || mode === 'uno-menu' || mode === 'snake-menu') currentActiveGame = null;
         if(mode === 'block-journey') { renderJourneyMap(); }
+        if(mode === 'admin') { renderAdminPanel(); loadAdminPlayers(); }
         
         if(mode === 'history') {
             currentHistoryContext = historyContext || 'menu';
@@ -15823,6 +16680,7 @@
     let monopolyState = null;
     let monoDiceRolling = false;
     let monopolyInfoIndex = null;
+    let monopolyFxTimer = null;
     const MONO_MAX_BUILDING_LEVEL = 5;
 
     function getMonopolyAvatarIndex(player, fallbackIndex = 0) {
@@ -15843,6 +16701,60 @@
         }
         const avatar = MONO_AVATARS[getMonopolyAvatarIndex(player, fallbackIndex)];
         return `<span class="mono-avatar-face ${className}" style="${getMonopolyAvatarStyle(player, fallbackIndex)}"><img src="${avatar.src}" alt="${escapeWerewolfText(avatar.label)}" loading="lazy"></span>`;
+    }
+
+    function setMonopolyFx(fx, duration = 1250) {
+        if (!monopolyState) return;
+        const fxId = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        monopolyState.fx = { ...fx, id: fxId, expiresAt: Date.now() + duration };
+        clearTimeout(monopolyFxTimer);
+        monopolyFxTimer = setTimeout(() => {
+            if (monopolyState?.fx?.id !== fxId) return;
+            monopolyState.fx = null;
+            if (currentActiveGame === 'monopoly') renderMonopoly();
+        }, duration);
+    }
+
+    function renderMonopolyFx() {
+        const fx = monopolyState?.fx;
+        if (!fx) return '';
+        if (fx.expiresAt && Date.now() > fx.expiresAt) return '';
+        const players = monopolyState.players || [];
+        const fromName = Number.isInteger(fx.from) ? (players[fx.from]?.name || 'Người chơi') : 'Ngân hàng';
+        const toName = Number.isInteger(fx.to) ? (players[fx.to]?.name || 'Người chơi') : 'Ngân hàng';
+        const amount = Number(fx.amount || 0);
+        const title = fx.title || (fx.type === 'jail' ? 'Vào tù' : 'Sự kiện');
+        const detail = fx.detail || '';
+        const moneyText = amount ? formatMonoMoney(amount) : '';
+        const routeHtml = moneyText
+            ? `<div class="mono-fx-route">
+                    <span class="mono-fx-badge">${escapeWerewolfText(fromName)}</span>
+                    <span class="mono-fx-badge mono-fx-money">${escapeWerewolfText(moneyText)}</span>
+                    <span class="mono-fx-badge">${escapeWerewolfText(toName)}</span>
+                </div>`
+            : '';
+        const coinHtml = (fx.type === 'rent' || fx.type === 'bonus' || fx.type === 'buy' || fx.type === 'tax')
+            ? `<span class="mono-fx-coin" style="--coin-x:-64px; --coin-y:-70px;"></span>
+               <span class="mono-fx-coin" style="--coin-x:72px; --coin-y:-58px;"></span>
+               <span class="mono-fx-coin" style="--coin-x:42px; --coin-y:58px;"></span>`
+            : '';
+        if (fx.type === 'jail') {
+            return `<div class="mono-fx-layer" aria-hidden="true">
+                <div class="mono-fx-card mono-fx-jail">
+                    <div class="mono-fx-title">${escapeWerewolfText(title)}</div>
+                    <div class="mono-fx-detail">${escapeWerewolfText(detail)}</div>
+                    <div class="mono-fx-bars"></div>
+                </div>
+            </div>`;
+        }
+        return `<div class="mono-fx-layer" aria-hidden="true">
+            ${coinHtml}
+            <div class="mono-fx-card mono-fx-${escapeWerewolfText(fx.type || 'event')}">
+                <div class="mono-fx-title">${escapeWerewolfText(title)}</div>
+                <div class="mono-fx-detail">${escapeWerewolfText(detail)}</div>
+                ${routeHtml}
+            </div>
+        </div>`;
     }
 
     function formatMonoMoney(amount) {
@@ -16061,7 +16973,8 @@
             phase: 'roll',
             status: tr('mono_started'),
             animating: false,
-            gameOver: false
+            gameOver: false,
+            fx: null
         };
     }
 
@@ -16136,6 +17049,12 @@
         player.jailTurns = 0;
         monopolyState.phase = 'action';
         monopolyState.status = `${player.name} vào tù. Cần gieo đôi để ra tù.`;
+        setMonopolyFx({
+            type: 'jail',
+            from: playerIndex,
+            title: 'Vào tù',
+            detail: `${player.name} bị đưa thẳng đến ô Tù.`
+        }, 1500);
     }
 
     function payMonopoly(playerIndex, amount, receiverIndex = null) {
@@ -16174,6 +17093,14 @@
             player.pos = card.moveTo;
         }
         monopolyState.status = `${player.name} rút thẻ: ${card.text}.`;
+        setMonopolyFx({
+            type: card.money > 0 ? 'bonus' : (card.money < 0 ? 'tax' : 'card'),
+            from: card.money < 0 ? playerIndex : null,
+            to: card.money > 0 ? playerIndex : null,
+            amount: Math.abs(card.money || 0),
+            title: type === 'chance' ? 'Cơ hội' : 'Khí vận',
+            detail: `${player.name}: ${card.text}`
+        });
         appendMonopolyDebtStatus(playerIndex);
     }
 
@@ -16193,6 +17120,14 @@
                 payMonopoly(playerIndex, rent, owner);
                 monopolyState.phase = 'action';
                 monopolyState.status = `${player.name} trả tiền thuê ${formatMonoMoney(rent)} cho ${monopolyState.players[owner].name} tại ${cell.name} (${getMonopolyBuildingLabel(level)}).`;
+                setMonopolyFx({
+                    type: 'rent',
+                    from: playerIndex,
+                    to: owner,
+                    amount: rent,
+                    title: 'Chuyển tiền thuê đất',
+                    detail: `${player.name} dừng ở ${cell.name} của ${monopolyState.players[owner].name}.`
+                });
                 appendMonopolyDebtStatus(playerIndex);
             } else {
                 monopolyState.phase = 'action';
@@ -16207,6 +17142,14 @@
             payMonopoly(playerIndex, cell.amount);
             monopolyState.phase = 'action';
             monopolyState.status = `${player.name} trả ${cell.name}: ${formatMonoMoney(cell.amount)}.`;
+            setMonopolyFx({
+                type: 'tax',
+                from: playerIndex,
+                to: null,
+                amount: cell.amount,
+                title: 'Nộp phí',
+                detail: `${player.name} trả ${cell.name}.`
+            });
             appendMonopolyDebtStatus(playerIndex);
         } else if (cell.type === 'chance' || cell.type === 'fortune') {
             drawMonopolyCard(cell.type, playerIndex);
@@ -16216,6 +17159,13 @@
         } else if (cell.type === 'free') {
             monopolyState.phase = 'action';
             monopolyState.status = `${player.name} vào bãi đậu xe miễn phí và mất lượt.`;
+            setMonopolyFx({
+                type: 'free',
+                from: null,
+                to: playerIndex,
+                title: 'Bãi đậu xe miễn phí',
+                detail: `${player.name} nghỉ một nhịp.`
+            });
         } else {
             monopolyState.phase = 'action';
             monopolyState.status = `${player.name} dừng ở ${cell.name}.`;
@@ -16277,6 +17227,14 @@
                     player.inJail = false;
                     player.jailTurns = 0;
                     monopolyState.status += ` Trả 500 để ra tù ở lượt sau.`;
+                    setMonopolyFx({
+                        type: 'tax',
+                        from: monopolyState.turn,
+                        to: null,
+                        amount: 500,
+                        title: 'Nộp phạt ra tù',
+                        detail: `${player.name} trả phí sau 3 lượt chưa gieo được đôi.`
+                    });
                     appendMonopolyDebtStatus(monopolyState.turn);
                     if (checkMonopolyWinner()) {
                         syncMonopolyState();
@@ -16299,6 +17257,16 @@
             if (passedGo) player.money += 2000;
             resolveMonopolyLanding(monopolyState.turn);
             if (passedGo) monopolyState.status = `${player.name} đi qua Bắt đầu và nhận 2000. ${monopolyState.status}`;
+            if (passedGo && !monopolyState.fx) {
+                setMonopolyFx({
+                    type: 'bonus',
+                    from: null,
+                    to: monopolyState.turn,
+                    amount: 2000,
+                    title: 'Thưởng qua Bắt đầu',
+                    detail: `${player.name} nhận tiền thưởng vòng mới.`
+                });
+            }
             renderMonopoly();
             syncMonopolyState();
             maybeRunMonopolyAI();
@@ -16317,6 +17285,14 @@
         monopolyState.owners[player.pos] = monopolyState.turn;
         monopolyState.buildings[player.pos] = 0;
         monopolyState.status = `${player.name} đã mua ${cell.name} với giá ${formatMonoMoney(cell.price)}.`;
+        setMonopolyFx({
+            type: 'buy',
+            from: monopolyState.turn,
+            to: null,
+            amount: cell.price,
+            title: 'Mua bất động sản',
+            detail: `${player.name} sở hữu ${cell.name}.`
+        });
         renderMonopoly();
         syncMonopolyState();
         maybeRunMonopolyAI();
@@ -16335,6 +17311,14 @@
         player.money -= meta.buildCost;
         monopolyState.buildings[pos] = Math.min(MONO_MAX_BUILDING_LEVEL, nextLevel);
         monopolyState.status = `${player.name} xây ${getMonopolyBuildingLabel(monopolyState.buildings[pos])} tại ${cell.name}. Tiền thuê mới: ${formatMonoMoney(getMonopolyRent(pos))}.`;
+        setMonopolyFx({
+            type: 'build',
+            from: monopolyState.turn,
+            to: null,
+            amount: meta.buildCost,
+            title: 'Nâng cấp tài sản',
+            detail: `${cell.name} lên ${getMonopolyBuildingLabel(monopolyState.buildings[pos])}.`
+        });
         renderMonopoly();
         syncMonopolyState();
         maybeRunMonopolyAI();
@@ -16356,6 +17340,14 @@
         monopolyState.buildings[pos] = 0;
         player.properties = getMonopolyOwnedProperties(playerIndex);
         monopolyState.status = `${player.name} bán ${cell.name} (${levelLabel}) và nhận ${formatMonoMoney(saleValue)}.`;
+        setMonopolyFx({
+            type: 'bonus',
+            from: null,
+            to: playerIndex,
+            amount: saleValue,
+            title: 'Bán bất động sản',
+            detail: `${player.name} bán ${cell.name} để thu hồi vốn.`
+        });
         resolveMonopolyDebt(playerIndex);
         appendMonopolyDebtStatus(playerIndex);
         renderMonopoly();
@@ -16564,6 +17556,7 @@
                 }).join('')}</div>
             </div>`;
         });
+        html += renderMonopolyFx();
         if (monopolyInfoIndex !== null) html += renderMonopolyInfoPanel(monopolyInfoIndex);
         board.innerHTML = html;
         bindMonopolyTokenPress();
