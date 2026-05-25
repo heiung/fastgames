@@ -12390,6 +12390,11 @@
         console.warn(`Social error ${context}:`, error);
         const message = String(error?.message || '').toLowerCase();
         const code = error?.code || '';
+        if (!socialSetupErrorShown && (code === '42P17' || message.includes('infinite recursion') || message.includes('conversation_members'))) {
+            socialSetupErrorShown = true;
+            alert('Chat đang bị lỗi policy Supabase ở bảng conversation_members. Hãy chạy file supabase-chat-policy-fix.sql trong Supabase SQL Editor rồi tải lại trang.');
+            return;
+        }
         if (!socialSetupErrorShown && (code === '42P01' || message.includes('does not exist') || message.includes('schema cache') || message.includes('bucket'))) {
             socialSetupErrorShown = true;
             alert('Phần bạn bè/chat cần chạy lại file supabase-fast-games-setup.sql trong Supabase SQL Editor.');
@@ -12789,10 +12794,11 @@
                 body
             });
         if (error) {
+            input.value = body;
             handleSocialError(error, 'send message');
             return;
         }
-        loadSocialMessages();
+        await loadSocialMessages();
     }
 
     function openAvatarPicker() {
